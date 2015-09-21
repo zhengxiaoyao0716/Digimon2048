@@ -1,6 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Digimon2048</string>
 
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+	<!--MainActivity-->
+
+    <string name="app_name">数码宝贝2048</string>
+	<string name="copyright">
+		版本：1.0\n
+		作者：正逍遥0716\n
+		\n
+		Copyright©2015 正逍遥0716.\n
+		Some Rights Reserved.
+	</string>
+    <string name="about">关于</string>
+    <string name="attentionMe">关注我</string>
+    <string name="iKnow">知道了</string>
+
+	<string name="shareString">
+		我在玩超级精美的《数码宝贝2048》，你也来吧！
+	</string>
+	<string name="helpString0">
+		手指滑动就能上下左右，让数码宝贝进化吧！
+	</string>
+	<string name="helpString1">
+		注意到棋盘右侧按钮了吗？
+	</string>
+	<string name="helpString2">
+		每次滑动都会随机获得一只幼年体数码宝贝或一枚数码蛋。
+	</string>
+
+	<!--GameActivity-->
+	<string name="cancel">我点错了</string>
+	<string name="restart">重新开始</string>
+	<string name="replay">重玩本关</string>
+	<string name="levelString">
+		该数码宝贝已进化成为究极体了，获得新的数码宝贝，继续挑战吧！
+	</string>
+
+	<!--RankActivity-->
+	<string-array name="rankingItem">
+		<item>本机记录</item>
+		<item>今日排行</item>
+		<item>本周排行</item>
+		<item>囧排行</item>
+	</string-array>
+
 </resources>
