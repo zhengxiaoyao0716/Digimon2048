@@ -337,7 +337,37 @@ public class GameActivity extends Activity {
 		@Override
 		public boolean gameOverIsReplay(int level, int score) {
 			// TODO Auto-generated method stub
-			return false;
+			final byte[] chooseDialogResult = {0, 0};
+			new Thread(){
+				@Override
+				public void run() {
+					Looper.prepare();
+					new AlertDialog.Builder(context).setMessage(R.string.gameOver)
+							.setNegativeButton(R.string.replayLater, new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									chooseDialogResult[0] = 1;
+								}
+							})
+							.setPositiveButton(R.string.replayNow, new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									chooseDialogResult[0] = 1;
+									chooseDialogResult[1] = 1;
+								}
+							}).setCancelable(false).show();
+					Looper.loop();
+				}
+			}.start();
+
+			while (chooseDialogResult[0]==0)
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
+			return chooseDialogResult[1]==0 ? false : true;
 		}
 
 		@Override

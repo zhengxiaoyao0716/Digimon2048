@@ -2,8 +2,8 @@
 <selector
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	<item
-		android:drawable="@mipmap/start0"/>
-	<item
 		android:state_pressed="true"
 		android:drawable="@mipmap/start1"/>
+	<item
+		android:drawable="@mipmap/start0"/>
 </selector>

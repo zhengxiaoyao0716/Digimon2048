@@ -39,6 +39,11 @@
 		获得新的数码宝贝，继续挑战吧！
 	</string>
 	<string name="nextLevel">继续挑战</string>
+	<string name="gameOver">
+		游戏失败，要重新开始吗（会为你保留关卡数据）？
+	</string>
+	<string name="replayLater">我想确认一下</string>
+	<string name="replayNow">好吧再来一次</string>
 
 	<!--RankActivity-->
 	<string-array name="rankingItem">
