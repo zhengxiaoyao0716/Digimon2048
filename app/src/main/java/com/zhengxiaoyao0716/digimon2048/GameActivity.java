@@ -2,9 +2,7 @@ package com.zhengxiaoyao0716.digimon2048;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,9 +15,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.GestureDetector;
+import android.os.Looper;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,7 +25,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class GameActivity extends Activity {
@@ -60,7 +56,7 @@ public class GameActivity extends Activity {
 		boardGrid = (GridLayout) findViewById(R.id.boardGrid);
 		boardGrid.setOnTouchListener(onBoardTouchListener);
 		boardH = boardW = 4;
-		aimNum = 8;
+		aimNum = 4096;
 		boardGrid.setRowCount(boardH);
 		boardGrid.setColumnCount(boardW);
 		for (int height = 0; height < boardH; height++)
@@ -73,7 +69,7 @@ public class GameActivity extends Activity {
 			}
 		try {
 			game2048 = new Game2048(gameCommunicate, boardH, boardW, aimNum);
-		} catch (Game2048Exception e) {
+		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -168,7 +164,7 @@ public class GameActivity extends Activity {
 					try {
 						game2048.action(((touchY + touchX > 0) ? 0 : 2)
 								+ ((touchY - touchX > 0) ? 0 : 1));
-					} catch (Game2048Exception e) {
+					} catch (IllegalArgumentException e) {
 						e.printStackTrace();
 					}
 				}
@@ -184,7 +180,7 @@ public class GameActivity extends Activity {
 			// TODO Auto-generated method stub
 			int[] dataBackup = {boardH, boardW, aimNum};
 			//load game data
-			HashMap<String, Object> dataMap = null;
+			HashMap<String, Object> dataMap = new HashMap<String, Object>();
 			try {
 				//read file
 				FileInputStream inputStream = openFileInput("gameData");
@@ -198,9 +194,7 @@ public class GameActivity extends Activity {
 				String dataStr = new String(arrayOutputStream.toByteArray());
 
 				//read json, write map
-				JSONObject dataJO = null;
-				if (dataStr!=null) dataJO = new JSONObject(dataStr);
-				dataMap = new HashMap<String, Object>();
+				JSONObject dataJO = new JSONObject(dataStr);
 				aimNum = dataJO.getInt("aimNum");
 				dataMap.put("aimNum", aimNum);
 				dataMap.put("level", dataJO.getInt("level"));
@@ -244,18 +238,11 @@ public class GameActivity extends Activity {
 				dataJO.put("level", dataMap.get("level"));
 				dataJO.put("score", dataMap.get("score"));
 				int[][] board = (int[][]) dataMap.get("board");
-				JSONArray boardJA = new JSONArray();
-				for (int[] row : board) {
-					JSONArray rowJA = new JSONArray();
-					for (int grid : row) rowJA.put(grid);
-					boardJA.put(rowJA);
-				}
+				JSONArray boardJA = new JSONArray(Arrays.deepToString(board));
 				dataJO.put("board", boardJA);
 
 				//read digimons, make json
-				JSONArray digimonJA = new JSONArray();
-				for (int digimon : digimons)
-					digimonJA.put(digimon);
+				JSONArray digimonJA = new JSONArray(Arrays.toString(digimons));
 				dataJO.put("digimons", digimonJA);
 
 				//write file
@@ -276,8 +263,8 @@ public class GameActivity extends Activity {
 			levelTextView.setText("Level:" + level);
 			scoreTextView.setText("Score:" + score);
 
-			String imageSort = new StringBuilder("grid")
-					.append(digimons[level - 1]).append("_").toString();
+			StringBuilder imageSort = new StringBuilder("grid")
+					.append(digimons[level - 1]).append("_");
 			for (int height = 0; height < boardH; height++)
 				for (int width = 0; width < boardW; width++)
 				{
@@ -305,33 +292,46 @@ public class GameActivity extends Activity {
 		@Override
 		public boolean levelUpIsEnterNextLevel(int level, int score) {
 			// TODO Auto-generated method stub
-			final boolean[] isEnterNextLevel = new boolean[1];
-			new AlertDialog.Builder(context).setMessage(R.string.levelUp)
-					.setNegativeButton(R.string.replay, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							isEnterNextLevel[0] = false;
-						}
-					})
-					.setPositiveButton(R.string.nextLevel, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							isEnterNextLevel[0] = true;
-						}
-					}).setCancelable(false).show();
-			if (isEnterNextLevel[0])
-			{
-				digimons = Arrays.copyOf(digimons, level + 1);
-				CHOOSE: while (true)
-				{
-					digimons[level] = 1 + new Random().nextInt(14);
-					for (int index = 0; index < level; index++)
-						if (digimons[index]==digimons[level]) continue CHOOSE;
-					break CHOOSE;
+			final byte[] chooseDialogResult = {0, 0};
+			new Thread(){
+				@Override
+				public void run() {
+					Looper.prepare();
+						new AlertDialog.Builder(context).setMessage(R.string.levelUp)
+								.setNegativeButton(R.string.replay, new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+										chooseDialogResult[0] = 1;
+									}
+								})
+								.setPositiveButton(R.string.nextLevel, new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+										chooseDialogResult[0] = 1;
+										chooseDialogResult[1] = 1;
+									}
+								}).setCancelable(false).show();
+					Looper.loop();
 				}
-				return true;
+			}.start();
+
+			while (chooseDialogResult[0]==0)
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
+			if (chooseDialogResult[1]==0) return false;
+			digimons = Arrays.copyOf(digimons, level + 1);
+			CHOOSE: while (true)
+			{
+				digimons[level] = 1 + new Random().nextInt(14);
+				for (int index = 0; index < level; index++)
+					if (digimons[index]==digimons[level]) continue CHOOSE;
+				break;
 			}
-			else return false;
+			return true;
 		}
 
 		@Override
