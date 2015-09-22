@@ -25,7 +25,7 @@
             android:layout_above="@id/soundButton"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:src="@mipmap/button_restart" />
+            android:src="@mipmap/button_replay" />
 
         <ImageView
             android:id="@+id/offButton"

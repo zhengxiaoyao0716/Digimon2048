@@ -73,6 +73,7 @@ public class MainActivity extends Activity {
 	{
 		Intent intent = new Intent(this, GameActivity.class);
 		startActivity(intent);
+		finish();
 	}
 	
 	public void onRankClick(View view)

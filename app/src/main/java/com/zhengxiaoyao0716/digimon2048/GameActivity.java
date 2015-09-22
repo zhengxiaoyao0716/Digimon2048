@@ -14,7 +14,9 @@ import com.zhengxiaoyao0716.game2048.*;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.GestureDetector;
@@ -30,6 +32,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class GameActivity extends Activity {
+	private Context context;
 	private TextView levelTextView;
 	private TextView scoreTextView;
 	private GridLayout boardGrid;
@@ -43,6 +46,7 @@ public class GameActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
+		context = this;
 		
 		ImageView replayButton = (ImageView) findViewById(R.id.replayButton);
 		replayButton.setOnClickListener(onClickListener);
@@ -56,7 +60,7 @@ public class GameActivity extends Activity {
 		boardGrid = (GridLayout) findViewById(R.id.boardGrid);
 		boardGrid.setOnTouchListener(onBoardTouchListener);
 		boardH = boardW = 4;
-		aimNum = 4096;
+		aimNum = 8;
 		boardGrid.setRowCount(boardH);
 		boardGrid.setColumnCount(boardW);
 		for (int height = 0; height < boardH; height++)
@@ -92,17 +96,19 @@ public class GameActivity extends Activity {
 	private OnClickListener onClickListener = new OnClickListener()
 	{
 		@Override
-		public void onClick(View v) {
+		public void onClick(final View v) {
 			// TODO Auto-generated method stub
 			switch (v.getId())
 			{
 				case R.id.replayButton:
 				{
-					new AlertDialog.Builder(getParent())
+					new AlertDialog.Builder(context)
 							.setNegativeButton(getString(R.string.cancel), null)
 							.setNeutralButton(getString(R.string.restart),
 									new DialogInterface.OnClickListener() {
 										public void onClick(DialogInterface d, int i) {
+											digimons = new int[1];
+											digimons[0] = 1 + new Random().nextInt(14);
 											game2048.replay(false);
 										}})
 							.setPositiveButton(getString(R.string.replay),
@@ -112,8 +118,30 @@ public class GameActivity extends Activity {
 										}
 									}).show();
 				}break;
+				case R.id.soundButton:
+				{
+					//*
+				}break;
+				case R.id.offButton:
+				{
+					new AlertDialog.Builder(context)
+							.setNegativeButton(getString(R.string.cancel), null)
+							.setNeutralButton(getString(R.string.quitGame),
+									new DialogInterface.OnClickListener() {
+										public void onClick(DialogInterface d, int i) {
+											Intent intent = new Intent(context, MainActivity.class);
+											startActivity(intent);
+											finish();
+										}
+									})
+							.setPositiveButton(getString(R.string.exitApp),
+									new DialogInterface.OnClickListener() {
+										public void onClick(DialogInterface d, int i) {
+											finish();
+										}
+									}).show();
+				}break;
 			}
-			
 		}
 	};
 
@@ -154,6 +182,7 @@ public class GameActivity extends Activity {
 		@Override
 		public Map<String, Object> loadData() {
 			// TODO Auto-generated method stub
+			int[] dataBackup = {boardH, boardW, aimNum};
 			//load game data
 			HashMap<String, Object> dataMap = null;
 			try {
@@ -194,8 +223,9 @@ public class GameActivity extends Activity {
 				for (int index = 0; index < digimonNums; index++)
 					digimons[index] = digimonJA.getInt(index);
 			} catch (Exception e) {
-				aimNum = 4096;
-				boardH = boardW = 4;
+				boardH = dataBackup[0];
+				boardW = dataBackup[1];
+				aimNum = dataBackup[2];
 				digimons = new int[1];
 				digimons[0] = 1 + new Random().nextInt(14);
 				return null;
@@ -275,10 +305,33 @@ public class GameActivity extends Activity {
 		@Override
 		public boolean levelUpIsEnterNextLevel(int level, int score) {
 			// TODO Auto-generated method stub
-			digimons = Arrays.copyOf(digimons, level + 1);
-			digimons[level] = digimons[level - 1] + 1;
-			if (digimons[level] > 14) digimons[level] = 1;
-			return true;
+			final boolean[] isEnterNextLevel = new boolean[1];
+			new AlertDialog.Builder(context).setMessage(R.string.levelUp)
+					.setNegativeButton(R.string.replay, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							isEnterNextLevel[0] = false;
+						}
+					})
+					.setPositiveButton(R.string.nextLevel, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							isEnterNextLevel[0] = true;
+						}
+					}).setCancelable(false).show();
+			if (isEnterNextLevel[0])
+			{
+				digimons = Arrays.copyOf(digimons, level + 1);
+				CHOOSE: while (true)
+				{
+					digimons[level] = 1 + new Random().nextInt(14);
+					for (int index = 0; index < level; index++)
+						if (digimons[index]==digimons[level]) continue CHOOSE;
+					break CHOOSE;
+				}
+				return true;
+			}
+			else return false;
 		}
 
 		@Override
