@@ -17,6 +17,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Looper;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -45,11 +46,11 @@ public class GameActivity extends Activity {
 		context = this;
 		
 		ImageView replayButton = (ImageView) findViewById(R.id.replayButton);
-		replayButton.setOnClickListener(onClickListener);
+		replayButton.setOnClickListener(onButtonClickListener);
 		ImageView soundButton = (ImageView) findViewById(R.id.soundButton);
-		soundButton.setOnClickListener(onClickListener);
+		soundButton.setOnClickListener(onButtonClickListener);
 		ImageView offButton = (ImageView) findViewById(R.id.offButton);
-		offButton.setOnClickListener(onClickListener);
+		offButton.setOnClickListener(onButtonClickListener);
 		
 		levelTextView = (TextView) findViewById(R.id.levelTextView);
 		scoreTextView = (TextView) findViewById(R.id.scoreTextView);
@@ -65,6 +66,7 @@ public class GameActivity extends Activity {
 				ImageView grid = new ImageView(this);
 				grid.setBackgroundResource(R.mipmap.cover_grid);
 				grid.setPadding(8, 9, 12, 11);
+				grid.setTag(0);
 				boardGrid.addView(grid);
 			}
 		try {
@@ -89,7 +91,7 @@ public class GameActivity extends Activity {
 		game2048.quitGame();
 	}
 
-	private OnClickListener onClickListener = new OnClickListener()
+	private OnClickListener onButtonClickListener = new OnClickListener()
 	{
 		@Override
 		public void onClick(final View v) {
@@ -155,9 +157,23 @@ public class GameActivity extends Activity {
 			{
 				touchX -= event.getX();
 				touchY -= event.getY();
-				if (touchX == 0 && touchY == 0)
+				if (touchX >= -16 && touchX <= 16 && touchY >= -16 && touchY <= 16)
 				{
-					//show normal
+					float viewH = v.getHeight(), viewW = v.getWidth();
+					float clickH = event.getY(), clickW = event.getX();
+					int height, width;
+					if (clickH==viewH) height = boardH - 1;
+					else height = (int)( boardH * clickH / viewH);
+					if (clickW==viewW) width = boardW - 1;
+					else width = (int) (boardW * clickW / viewW);
+					ImageView grid = (ImageView) boardGrid.getChildAt(boardW * height + width);
+					int num = (int) grid.getTag();
+					if (num != 0 && num <= aimNum)
+					{
+						String imageName = new StringBuilder("grid0_").append(num).toString();
+						grid.setImageResource(getResources().getIdentifier(imageName,
+								"mipmap", "com.zhengxiaoyao0716.digimon2048"));
+					}
 				}
 				else
 				{
@@ -268,8 +284,8 @@ public class GameActivity extends Activity {
 			for (int height = 0; height < boardH; height++)
 				for (int width = 0; width < boardW; width++)
 				{
-					ImageView grid = (ImageView) boardGrid.getChildAt(4 * height+ width);
-					if (board[height][width]==0) grid.setImageResource(R.mipmap.grid00);
+					ImageView grid = (ImageView) boardGrid.getChildAt(boardW * height+ width);
+					if (board[height][width]==0) grid.setImageResource(R.mipmap.grid0);
 					else if (board[height][width]<=aimNum)
 					{
 						String imageName
@@ -286,6 +302,7 @@ public class GameActivity extends Activity {
 						grid.setImageResource(getResources().getIdentifier(imageName,
 								"mipmap", "com.zhengxiaoyao0716.digimon2048"));
 					}
+					grid.setTag(board[height][width]);
 				}
 		}
 
@@ -373,7 +390,7 @@ public class GameActivity extends Activity {
 		@Override
 		public boolean saveFailedIsStillQuit() {
 			// TODO Auto-generated method stub
-			return false;
+			return true;
 		}
 
 		@Override
