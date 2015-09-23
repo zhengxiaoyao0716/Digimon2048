@@ -12,15 +12,20 @@ import com.zhengxiaoyao0716.game2048.*;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Looper;
-import android.util.Log;
+import android.os.Vibrator;
+import android.support.annotation.NonNull;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -36,15 +41,17 @@ public class GameActivity extends Activity {
 
 	private int boardH, boardW, aimNum;
 	private Game2048 game2048;
-
 	private int[] digimons;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
+
 		context = this;
-		
+		FrameLayout gameLayout = (FrameLayout) findViewById(R.id.gameLayout);
+		gameLayout.setBackgroundColor(Color.parseColor("#28A306"));
+
 		ImageView replayButton = (ImageView) findViewById(R.id.replayButton);
 		replayButton.setOnClickListener(onButtonClickListener);
 		ImageView soundButton = (ImageView) findViewById(R.id.soundButton);
@@ -91,6 +98,16 @@ public class GameActivity extends Activity {
 		game2048.quitGame();
 	}
 
+	@Override
+	public boolean onKeyDown(int keyCode, @NonNull KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			Intent intent = new Intent(context, MainActivity.class);
+			startActivity(intent);
+			finish();
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+
 	private OnClickListener onButtonClickListener = new OnClickListener()
 	{
 		@Override
@@ -112,13 +129,34 @@ public class GameActivity extends Activity {
 							.setPositiveButton(getString(R.string.replay),
 									new DialogInterface.OnClickListener() {
 										public void onClick(DialogInterface d, int i) {
+											CHOOSE: while (true)
+											{
+												digimons[digimons.length - 1]
+														= 1 + new Random().nextInt(14);
+												for (int index = 0; index < digimons.length - 1; index++)
+													if (digimons[index]==digimons[digimons.length - 1])
+														continue CHOOSE;
+												break;
+											}
 											game2048.replay(true);
 										}
 									}).show();
 				}break;
 				case R.id.soundButton:
 				{
-					//*
+					new AlertDialog.Builder(context)
+							.setNegativeButton(getString(R.string.cancel), null)
+							.setNeutralButton(getString(R.string.closeSound),
+									new DialogInterface.OnClickListener() {
+										public void onClick(DialogInterface d, int i) {
+
+										}
+									})
+							.setPositiveButton(getString(R.string.closeMusic),
+									new DialogInterface.OnClickListener() {
+										public void onClick(DialogInterface d, int i) {
+										}
+									}).show();
 				}break;
 				case R.id.offButton:
 				{
@@ -196,7 +234,7 @@ public class GameActivity extends Activity {
 			// TODO Auto-generated method stub
 			int[] dataBackup = {boardH, boardW, aimNum};
 			//load game data
-			HashMap<String, Object> dataMap = new HashMap<String, Object>();
+			HashMap<String, Object> dataMap = new HashMap<>();
 			try {
 				//read file
 				FileInputStream inputStream = openFileInput("gameData");
@@ -276,8 +314,8 @@ public class GameActivity extends Activity {
 		@Override
 		public void showData(int level, int score, int[][] board) {
 			// TODO Auto-generated method stub
-			levelTextView.setText("Level:" + level);
-			scoreTextView.setText("Score:" + score);
+			levelTextView.setText(getString(R.string.level) + level);
+			scoreTextView.setText(getString(R.string.score)+ score);
 
 			StringBuilder imageSort = new StringBuilder("grid")
 					.append(digimons[level - 1]).append("_");
@@ -331,9 +369,10 @@ public class GameActivity extends Activity {
 					Looper.loop();
 				}
 			}.start();
-
+			//Wait dialog return.
 			while (chooseDialogResult[0]==0)
 				try {
+					//Prevent ANR
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
@@ -354,6 +393,8 @@ public class GameActivity extends Activity {
 		@Override
 		public boolean gameOverIsReplay(int level, int score) {
 			// TODO Auto-generated method stub
+			((Vibrator) getSystemService(Service.VIBRATOR_SERVICE)).vibrate(1000);
+
 			final byte[] chooseDialogResult = {0, 0};
 			new Thread(){
 				@Override
@@ -376,15 +417,16 @@ public class GameActivity extends Activity {
 					Looper.loop();
 				}
 			}.start();
-
+			//Wait dialog return.
 			while (chooseDialogResult[0]==0)
 				try {
+					//Prevent ANR
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 
-			return chooseDialogResult[1]==0 ? false : true;
+			return chooseDialogResult[1] != 0;
 		}
 
 		@Override
@@ -396,7 +438,7 @@ public class GameActivity extends Activity {
 		@Override
 		public void noChangeRespond() {
 			// TODO Auto-generated method stub
-			
+			((Vibrator) getSystemService(Service.VIBRATOR_SERVICE)).vibrate(500);
 		}
 
 		@Override

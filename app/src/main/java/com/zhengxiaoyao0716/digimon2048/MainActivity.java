@@ -53,7 +53,7 @@ public class MainActivity extends Activity {
 				public void onClick(DialogInterface d, int i)
 				{
 					Intent intent = new Intent(Intent.ACTION_VIEW,
-					Uri.parse("http://blog.sina.cn/zhengxiaoyao0716"));
+					Uri.parse("https://github.com/zhengxiaoyao0716/Digimon2048"));
 					startActivity(intent);
 				}
 			});
