@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Digimon2048 by zhengxiaoyao0716</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/zhengxiaoyao0716/Digimon2048">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/zhengxiaoyao0716/Digimon2048/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/zhengxiaoyao0716/Digimon2048/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Digimon2048</h1>
+          <p>数码宝贝2048，基于Game2048的一个实现</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/zhengxiaoyao0716">zhengxiaoyao0716</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h1>
+<a id="digimon2048" class="anchor" href="#digimon2048" aria-hidden="true"><span class="octicon octicon-link"></span></a>Digimon2048</h1>
+
+<h2>
+<a id="game2048在android上的应用" class="anchor" href="#game2048%E5%9C%A8android%E4%B8%8A%E7%9A%84%E5%BA%94%E7%94%A8" aria-hidden="true"><span class="octicon octicon-link"></span></a>Game2048在Android上的应用<br>
+</h2>
+
+<h3>
+<a id="最近被同步对话框的问题卡住了" class="anchor" href="#%E6%9C%80%E8%BF%91%E8%A2%AB%E5%90%8C%E6%AD%A5%E5%AF%B9%E8%AF%9D%E6%A1%86%E7%9A%84%E9%97%AE%E9%A2%98%E5%8D%A1%E4%BD%8F%E4%BA%86" aria-hidden="true"><span class="octicon octicon-link"></span></a>最近被同步对话框的问题卡住了。。。<br>
+</h3>
+
+<h4>
+<a id="其实之前也弄了个临时的解决方法" class="anchor" href="#%E5%85%B6%E5%AE%9E%E4%B9%8B%E5%89%8D%E4%B9%9F%E5%BC%84%E4%BA%86%E4%B8%AA%E4%B8%B4%E6%97%B6%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95" aria-hidden="true"><span class="octicon octicon-link"></span></a>其实之前也弄了个临时的解决方法：<br>
+</h4>
+
+<p>new一个带Looper的线程，再将主线程sleep(100);<br>
+由于Android主线程不能阻塞，直接join或wait会引起ANR<br>
+所以我在主线程做了一个每次sleep100ms的循环<br>
+当用户没有做出选择时就一直循环。。。<br>
+这样虽然解决了问题，但总归不是很好<br>
+看了看网上的解决方案，大都不理想<br>
+没办法，阻塞式的流程确实不适合Android<br></p>
+
+<h4>
+<a id="于是想出第二套方案" class="anchor" href="#%E4%BA%8E%E6%98%AF%E6%83%B3%E5%87%BA%E7%AC%AC%E4%BA%8C%E5%A5%97%E6%96%B9%E6%A1%88" aria-hidden="true"><span class="octicon octicon-link"></span></a>于是想出第二套方案：<br>
+</h4>
+
+<p>借助PopupWindow类，创建一个非阻塞的Dialog<br>
+然而PopupWindow的功能实在各种蹩脚<br>
+在网上搜索Android同步对话框，从评论、回复来看，<br>
+很多貌似人都不知道Android有这么一个同步类。<br>
+比如，不设置background就不能点击区域外dismiss<br>
+严重怀疑为何会这样设计，或者这真是一个bug？<br>
+再比如，不取得focus按返回会退出Activity<br>
+取得了focus按返回又会直接dismiss<br>
+这显然与我想要的，弹出一个选择对话框，<br>
+然后根据用户的选择来执行后面的代码的要求不符合<br>
+就这样，这几天程序进展极慢。<br></p>
+
+<h4>
+<a id="接下来我可能会继续尝试写一个真正的阻塞式对话框" class="anchor" href="#%E6%8E%A5%E4%B8%8B%E6%9D%A5%E6%88%91%E5%8F%AF%E8%83%BD%E4%BC%9A%E7%BB%A7%E7%BB%AD%E5%B0%9D%E8%AF%95%E5%86%99%E4%B8%80%E4%B8%AA%E7%9C%9F%E6%AD%A3%E7%9A%84%E9%98%BB%E5%A1%9E%E5%BC%8F%E5%AF%B9%E8%AF%9D%E6%A1%86" aria-hidden="true"><span class="octicon octicon-link"></span></a>接下来我可能会继续尝试写一个真正的阻塞式对话框<br>
+</h4>
+
+<h4>
+<a id="或者干脆改game2048源码做成非阻塞的" class="anchor" href="#%E6%88%96%E8%80%85%E5%B9%B2%E8%84%86%E6%94%B9game2048%E6%BA%90%E7%A0%81%E5%81%9A%E6%88%90%E9%9D%9E%E9%98%BB%E5%A1%9E%E7%9A%84" aria-hidden="true"><span class="octicon octicon-link"></span></a>或者干脆改Game2048源码，做成非阻塞的<br>
+</h4>
+
+<h3>
+<a id="真心是醉了是我使用方法不对么为毛还是非阻塞的" class="anchor" href="#%E7%9C%9F%E5%BF%83%E6%98%AF%E9%86%89%E4%BA%86%E6%98%AF%E6%88%91%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95%E4%B8%8D%E5%AF%B9%E4%B9%88%E4%B8%BA%E6%AF%9B%E8%BF%98%E6%98%AF%E9%9D%9E%E9%98%BB%E5%A1%9E%E7%9A%84" aria-hidden="true"><span class="octicon octicon-link"></span></a>真心是醉了，是我使用方法不对么？为毛还是非阻塞的！！！<br>
+</h3>
+
+<p>谁能告诉我在xml中怎么对应Api版本做不同事情？<br>
+提示最好加上paddingStart，但总不能为了那么一个可有可无的东西<br>
+去升高版本吧？？？闲淡的lint。<br></p>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
