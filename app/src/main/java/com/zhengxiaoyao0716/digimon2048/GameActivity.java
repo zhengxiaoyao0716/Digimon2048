@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Random;
 
 import com.zhengxiaoyao0716.game2048.*;
+import com.zhengxiaoyao0716.syncdialog.SyncDialog;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -17,17 +18,22 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -35,6 +41,7 @@ import org.json.JSONObject;
 
 public class GameActivity extends Activity {
 	private Context context;
+	private RelativeLayout gameRelativeLayout;
 	private TextView levelTextView;
 	private TextView scoreTextView;
 	private GridLayout boardGrid;
@@ -47,10 +54,23 @@ public class GameActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
-
 		context = this;
-		FrameLayout gameLayout = (FrameLayout) findViewById(R.id.gameLayout);
-		gameLayout.setBackgroundColor(Color.parseColor("#28A306"));
+
+		Drawable[] gameBackground = new Drawable[2];
+		gameBackground[0] = new ColorDrawable(Color.parseColor("#28A306"));
+		//我被这倒霉玩意儿恶心到了，要是按网上的方法改API，只能越改越高。。。
+		//而这个方法在xml中又不起作用。。。
+		if (Build.VERSION.SDK_INT >= 21) {
+			gameBackground[1] = getDrawable(R.mipmap.cover_body);
+		}
+		else //noinspection deprecation
+			gameBackground[1] = getResources().getDrawable(R.mipmap.cover_body);
+
+		gameRelativeLayout = (RelativeLayout) findViewById(R.id.gameRelativeLayout);
+		if (Build.VERSION.SDK_INT >= 16)
+			gameRelativeLayout.setBackground(new LayerDrawable(gameBackground));
+		else //noinspection deprecation
+			gameRelativeLayout.setBackgroundDrawable(new LayerDrawable(gameBackground));
 
 		ImageView replayButton = (ImageView) findViewById(R.id.replayButton);
 		replayButton.setOnClickListener(onButtonClickListener);
@@ -108,7 +128,7 @@ public class GameActivity extends Activity {
 		return super.onKeyDown(keyCode, event);
 	}
 
-	private OnClickListener onButtonClickListener = new OnClickListener()
+	private final OnClickListener onButtonClickListener = new OnClickListener()
 	{
 		@Override
 		public void onClick(final View v) {
@@ -118,15 +138,15 @@ public class GameActivity extends Activity {
 				case R.id.replayButton:
 				{
 					new AlertDialog.Builder(context)
-							.setNegativeButton(getString(R.string.cancel), null)
-							.setNeutralButton(getString(R.string.restart),
+							.setNegativeButton(R.string.cancel, null)
+							.setNeutralButton(R.string.restart,
 									new DialogInterface.OnClickListener() {
 										public void onClick(DialogInterface d, int i) {
 											digimons = new int[1];
 											digimons[0] = 1 + new Random().nextInt(14);
 											game2048.replay(false);
 										}})
-							.setPositiveButton(getString(R.string.replay),
+							.setPositiveButton(R.string.replay,
 									new DialogInterface.OnClickListener() {
 										public void onClick(DialogInterface d, int i) {
 											CHOOSE: while (true)
@@ -145,14 +165,14 @@ public class GameActivity extends Activity {
 				case R.id.soundButton:
 				{
 					new AlertDialog.Builder(context)
-							.setNegativeButton(getString(R.string.cancel), null)
-							.setNeutralButton(getString(R.string.closeSound),
+							.setNegativeButton(R.string.cancel, null)
+							.setNeutralButton(R.string.closeSound,
 									new DialogInterface.OnClickListener() {
 										public void onClick(DialogInterface d, int i) {
 
 										}
 									})
-							.setPositiveButton(getString(R.string.closeMusic),
+							.setPositiveButton(R.string.closeMusic,
 									new DialogInterface.OnClickListener() {
 										public void onClick(DialogInterface d, int i) {
 										}
@@ -161,8 +181,8 @@ public class GameActivity extends Activity {
 				case R.id.offButton:
 				{
 					new AlertDialog.Builder(context)
-							.setNegativeButton(getString(R.string.cancel), null)
-							.setNeutralButton(getString(R.string.quitGame),
+							.setNegativeButton(R.string.cancel, null)
+							.setNeutralButton(R.string.quitGame,
 									new DialogInterface.OnClickListener() {
 										public void onClick(DialogInterface d, int i) {
 											Intent intent = new Intent(context, MainActivity.class);
@@ -170,19 +190,23 @@ public class GameActivity extends Activity {
 											finish();
 										}
 									})
-							.setPositiveButton(getString(R.string.exitApp),
+							.setPositiveButton(R.string.exitApp,
 									new DialogInterface.OnClickListener() {
 										public void onClick(DialogInterface d, int i) {
 											finish();
 										}
 									}).show();
 				}break;
+				case R.id.menuButton:
+				{
+					
+				}break;
 			}
 		}
 	};
 
-	float touchX=0, touchY=0;
-	private View.OnTouchListener onBoardTouchListener = new View.OnTouchListener() {
+	private float touchX=0, touchY=0;
+	private final View.OnTouchListener onBoardTouchListener = new View.OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
 			// TODO: Implement this method
@@ -208,7 +232,7 @@ public class GameActivity extends Activity {
 					int num = (int) grid.getTag();
 					if (num != 0 && num <= aimNum)
 					{
-						String imageName = new StringBuilder("grid0_").append(num).toString();
+						String imageName = "grid0_" + num;
 						grid.setImageResource(getResources().getIdentifier(imageName,
 								"mipmap", "com.zhengxiaoyao0716.digimon2048"));
 					}
@@ -227,7 +251,7 @@ public class GameActivity extends Activity {
 		}
 	};
 
-	private Game2048Communicate gameCommunicate = new Game2048Communicate()
+	private final Game2048Communicate gameCommunicate = new Game2048Communicate()
 	{
 		@Override
 		public Map<String, Object> loadData() {
@@ -326,6 +350,8 @@ public class GameActivity extends Activity {
 					if (board[height][width]==0) grid.setImageResource(R.mipmap.grid0);
 					else if (board[height][width]<=aimNum)
 					{
+						//我要吐槽这里为毛会有警告？？？难道说
+						//imageName = imageSort.toString() + board[heigjt][width];效率更高？！
 						String imageName
 								= new StringBuilder(imageSort)
 								.append(board[height][width]).toString();
@@ -334,6 +360,7 @@ public class GameActivity extends Activity {
 					}
 					else
 					{
+						//这么多个append了还建议String？！
 						String imageName = new StringBuilder("grid")
 								.append(digimons[board[height][width] - aimNum - 1])
 								.append("_").append(aimNum).toString();
@@ -396,6 +423,8 @@ public class GameActivity extends Activity {
 			((Vibrator) getSystemService(Service.VIBRATOR_SERVICE)).vibrate(1000);
 
 			final byte[] chooseDialogResult = {0, 0};
+			/*
+
 			new Thread(){
 				@Override
 				public void run() {
@@ -425,7 +454,24 @@ public class GameActivity extends Activity {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+			 */
 
+			new SyncDialog.Builder(context).setMessage(R.string.gameOver)
+					.addButton(R.string.replayLater, new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							chooseDialogResult[0] = 1;
+						}
+					})
+					.addButton(R.string.replayNow, new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							chooseDialogResult[0] = 1;
+							chooseDialogResult[1] = 1;
+						}
+					}).setCancelable(false).show();
+			//呵呵哒，谁告诉我PopupDialog是阻塞的？？？
+			Log.v("Continue run", "" + chooseDialogResult[1]);
 			return chooseDialogResult[1] != 0;
 		}
 
@@ -438,7 +484,7 @@ public class GameActivity extends Activity {
 		@Override
 		public void noChangeRespond() {
 			// TODO Auto-generated method stub
-			((Vibrator) getSystemService(Service.VIBRATOR_SERVICE)).vibrate(500);
+			((Vibrator) getSystemService(Service.VIBRATOR_SERVICE)).vibrate(300);
 		}
 
 		@Override

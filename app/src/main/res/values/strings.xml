@@ -4,6 +4,9 @@
 	<!--MainActivity-->
 
     <string name="app_name">数码宝贝2048</string>
+	<string name="share">分享</string>
+	<string name="about">关于</string>
+	<string name="exit">退出</string>
 	<string name="copyright">
 		版本：1.0\n
 		作者：正逍遥0716\n
@@ -11,7 +14,6 @@
 		Copyright©2015 正逍遥0716.\n
 		Some Rights Reserved.
 	</string>
-    <string name="about">关于</string>
     <string name="attentionMe">关注我</string>
     <string name="iKnow">知道了</string>
 
@@ -38,7 +40,7 @@
 	<string name="playSound">打卡音效</string>
 	<string name="closeMusic">关闭音乐</string>
 	<string name="playMusic">播放音乐</string>
-	<string name="quitGame">返回菜单</string>
+	<string name="quitGame">回到标题</string>
 	<string name="exitApp">退出应用</string>
 	<string name="levelUp">
 		你的数码宝贝已进化成为究极体了！\n
@@ -46,7 +48,7 @@
 	</string>
 	<string name="nextLevel">继续挑战</string>
 	<string name="gameOver">
-		游戏失败，要重新开始吗（会为你保留关卡数据）？
+		游戏结束，再次挑战吗？\n
 	</string>
 	<string name="replayLater">我想确认一下</string>
 	<string name="replayNow">好吧再来一次</string>

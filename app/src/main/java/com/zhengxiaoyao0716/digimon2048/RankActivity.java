@@ -18,7 +18,8 @@ public class RankActivity extends Activity
 		onTodayClick();
 		
 		ActionBar actionBar = getActionBar();
-		actionBar.setDisplayHomeAsUpEnabled(true); 
+		if (actionBar!=null)
+			actionBar.setDisplayHomeAsUpEnabled(true);
     }
 	
 	@Override
@@ -32,8 +33,8 @@ public class RankActivity extends Activity
 	{
 		ListView rankingList = (ListView)findViewById(R.id.rankingList);
 		String[] playerName = {"wait", "wait"};
-		ArrayAdapter<String> rankingAdapter = new ArrayAdapter<String>(this,
-		android.R.layout.simple_expandable_list_item_1, playerName);
+		ArrayAdapter<String> rankingAdapter = new ArrayAdapter<>(this,
+				android.R.layout.simple_expandable_list_item_1, playerName);
 		rankingList.setAdapter(rankingAdapter);
 	}
 	
