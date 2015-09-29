@@ -3,13 +3,14 @@ package com.zhengxiaoyao0716.digimon2048;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import com.zhengxiaoyao0716.adapter.ChoosePagerAdapter;
 import com.zhengxiaoyao0716.game2048.*;
-import com.zhengxiaoyao0716.syncdialog.SyncDialog;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -26,11 +27,12 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
-import android.util.Log;
+import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -58,8 +60,8 @@ public class GameActivity extends Activity {
 
 		Drawable[] gameBackground = new Drawable[2];
 		gameBackground[0] = new ColorDrawable(Color.parseColor("#28A306"));
-		//我被这倒霉玩意儿恶心到了，要是按网上的方法改API，只能越改越高。。。
-		//而这个方法在xml中又不起作用。。。
+		//被这倒霉玩意儿恶心到了，要是按网上的方法改API，只能越改越高。。。
+		//而且在xml中也没法根据SDK版本来if。。。
 		if (Build.VERSION.SDK_INT >= 21) {
 			gameBackground[1] = getDrawable(R.mipmap.cover_body);
 		}
@@ -72,19 +74,17 @@ public class GameActivity extends Activity {
 		else //noinspection deprecation
 			gameRelativeLayout.setBackgroundDrawable(new LayerDrawable(gameBackground));
 
-		ImageView replayButton = (ImageView) findViewById(R.id.replayButton);
-		replayButton.setOnClickListener(onButtonClickListener);
-		ImageView soundButton = (ImageView) findViewById(R.id.soundButton);
-		soundButton.setOnClickListener(onButtonClickListener);
-		ImageView offButton = (ImageView) findViewById(R.id.offButton);
-		offButton.setOnClickListener(onButtonClickListener);
+		((ImageView) findViewById(R.id.replayButton)).setOnClickListener(onButtonClickListener);
+		((ImageView) findViewById(R.id.soundButton)).setOnClickListener(onButtonClickListener);
+		((ImageView) findViewById(R.id.offButton)).setOnClickListener(onButtonClickListener);
+		((ImageView) findViewById(R.id.optionsButton)).setOnClickListener(onButtonClickListener);
 		
 		levelTextView = (TextView) findViewById(R.id.levelTextView);
 		scoreTextView = (TextView) findViewById(R.id.scoreTextView);
 		boardGrid = (GridLayout) findViewById(R.id.boardGrid);
 		boardGrid.setOnTouchListener(onBoardTouchListener);
 		boardH = boardW = 4;
-		aimNum = 4096;
+		aimNum = 64;
 		boardGrid.setRowCount(boardH);
 		boardGrid.setColumnCount(boardW);
 		for (int height = 0; height < boardH; height++)
@@ -94,6 +94,7 @@ public class GameActivity extends Activity {
 				grid.setBackgroundResource(R.mipmap.cover_grid);
 				grid.setPadding(8, 9, 12, 11);
 				grid.setTag(0);
+				grid.setImageResource(R.mipmap.grid0);
 				boardGrid.addView(grid);
 			}
 		try {
@@ -127,7 +128,7 @@ public class GameActivity extends Activity {
 		}
 		return super.onKeyDown(keyCode, event);
 	}
-
+	//界面侧边按钮的点击事件
 	private final OnClickListener onButtonClickListener = new OnClickListener()
 	{
 		@Override
@@ -143,21 +144,13 @@ public class GameActivity extends Activity {
 									new DialogInterface.OnClickListener() {
 										public void onClick(DialogInterface d, int i) {
 											digimons = new int[1];
-											digimons[0] = 1 + new Random().nextInt(14);
+											chooseDigimon(0);
 											game2048.replay(false);
 										}})
 							.setPositiveButton(R.string.replay,
 									new DialogInterface.OnClickListener() {
 										public void onClick(DialogInterface d, int i) {
-											CHOOSE: while (true)
-											{
-												digimons[digimons.length - 1]
-														= 1 + new Random().nextInt(14);
-												for (int index = 0; index < digimons.length - 1; index++)
-													if (digimons[index]==digimons[digimons.length - 1])
-														continue CHOOSE;
-												break;
-											}
+											chooseDigimon(digimons.length - 1);
 											game2048.replay(true);
 										}
 									}).show();
@@ -197,14 +190,15 @@ public class GameActivity extends Activity {
 										}
 									}).show();
 				}break;
-				case R.id.menuButton:
+				case R.id.optionsButton:
 				{
-					
+					new AlertDialog.Builder(context)
+							.setMessage("options").show();
 				}break;
 			}
 		}
 	};
-
+	//棋盘上的滑动与点击事件
 	private float touchX=0, touchY=0;
 	private final View.OnTouchListener onBoardTouchListener = new View.OnTouchListener() {
 		@Override
@@ -250,6 +244,117 @@ public class GameActivity extends Activity {
 			return true;
 		}
 	};
+	//选择数码宝贝
+	private final static int DIGIMON_NUMS = 14;
+	private void chooseDigimon(final int posInDigimons)
+	{
+		final ArrayList<Integer> digimonArray = new ArrayList<>(DIGIMON_NUMS);
+		for (int i = 1; i <= DIGIMON_NUMS; i++) digimonArray.add(i);
+		for (int index = 0; index < posInDigimons; index++)
+			digimonArray.remove((Integer)digimons[index]);
+
+		final ArrayList<View> digimonViews = new ArrayList<>();
+		for (int digimon : digimonArray) {
+			String imageName = new StringBuilder("grid")
+					.append(digimon).append("_64").toString();
+			ImageView digimonIV = new ImageView(context);
+			digimonIV.setImageResource(getResources().getIdentifier(imageName,
+					"mipmap", "com.zhengxiaoyao0716.digimon2048"));
+			digimonViews.add(digimonIV);
+		}
+
+		//错误的做法，View不能复用！
+		/*
+		//首位插入末位的View
+		digimonViews.add(0, digimonViews.get(digimonViews.size() - 1));
+		//末尾增加首位（现在是次位）的View
+		digimonViews.add(0, digimonViews.get(1));
+		*/
+		//然而图片是可以复用的
+		//首位插入末位的图片
+		ImageView tempDigimonIV = new ImageView(context);
+		tempDigimonIV .setImageDrawable(
+				((ImageView) digimonViews.get(digimonViews.size() - 1)).getDrawable());
+		digimonViews.add(0, tempDigimonIV);
+		//末尾增加首位（现在是次位）的图片
+		tempDigimonIV = new ImageView(context);
+		tempDigimonIV .setImageDrawable(
+				((ImageView) digimonViews.get(1)).getDrawable());
+		digimonViews.add(tempDigimonIV);
+
+		//加载布局
+		View chooseDialogView = getLayoutInflater().inflate(R.layout.dialog_choose_digimon, null);
+		final AlertDialog chooseAD = new AlertDialog.Builder(context)
+				.setTitle(R.string.pleaseChoose).setView(chooseDialogView)
+				.setCancelable(false).create();
+
+		//设置ViewPager
+		final ViewPager chooseVP = (ViewPager) chooseDialogView.findViewById(R.id.chooseViewPager);
+		chooseVP.setAdapter(new ChoosePagerAdapter(digimonViews));
+		chooseVP.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+			@Override
+			public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+				//其实是digimonViews.size() - 2，也就是digimonArray - 1 + 1;
+				//第二个参数false。默认true是平滑过渡，但现在其实已经过渡完成，自然应当是false
+				if (position == 0 && positionOffset == 0) chooseVP.setCurrentItem(digimonArray.size(), false);
+				else if (position == digimonViews.size() - 1 && positionOffset == 0)
+					chooseVP.setCurrentItem(1, false);
+				else if (positionOffset == 0) digimons[posInDigimons] = digimonArray.get(position - 1);
+			}
+
+			@Override
+			public void onPageSelected(int position) {
+				//在这里做跳转效果并不理想。onPageSelected方法是在跳转过程中调用的
+				//所以会导致首位连接处的跳转少半个周期
+			}
+
+			@Override
+			public void onPageScrollStateChanged(int state) {
+			}
+		});
+		//从随机位置开始，重要的是一定不能是首末位置（0、digimonViews.size() - 1)
+		chooseVP.setCurrentItem(1 + new Random().nextInt(digimonArray.size()));
+
+		//设置Button
+		OnClickListener OnChooseButtonClick = new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				switch (v.getId())
+				{
+					case R.id.prevDigimonButton:
+						chooseVP.setCurrentItem(chooseVP.getCurrentItem() - 1);
+						break;
+					case R.id.chooseThisButton:
+					{
+						//用户更换数码宝贝后棋盘需要刷新，因为非阻塞。。。
+						for (int height = 0; height < boardH; height++)
+							for (int width = 0; width < boardW; width++) {
+								ImageView grid = (ImageView) boardGrid.getChildAt(
+										boardW * height + width);
+								int gridNum = (int) grid.getTag();
+								if (gridNum != 0 && gridNum < aimNum) {
+									String imageName = new StringBuilder("grid")
+											.append(digimons[posInDigimons]).append("_")
+											.append(gridNum).toString();
+									grid.setImageResource(getResources().getIdentifier(imageName,
+											"mipmap", "com.zhengxiaoyao0716.digimon2048"));
+								}
+							}
+						chooseAD.dismiss();
+					}break;
+					case R.id.nextDigimonButton:
+						chooseVP.setCurrentItem(chooseVP.getCurrentItem() + 1);
+						break;
+				}
+			}
+		};
+		((Button) chooseDialogView.findViewById(R.id.prevDigimonButton)).setOnClickListener(OnChooseButtonClick);
+		((Button) chooseDialogView.findViewById(R.id.chooseThisButton)).setOnClickListener(OnChooseButtonClick);
+		((Button) chooseDialogView.findViewById(R.id.nextDigimonButton)).setOnClickListener(OnChooseButtonClick);
+
+		//展示Dialog
+		chooseAD.show();
+	}
 
 	private final Game2048Communicate gameCommunicate = new Game2048Communicate()
 	{
@@ -299,7 +404,7 @@ public class GameActivity extends Activity {
 				boardW = dataBackup[1];
 				aimNum = dataBackup[2];
 				digimons = new int[1];
-				digimons[0] = 1 + new Random().nextInt(14);
+				chooseDigimon(0);
 				return null;
 			}
 			return dataMap;
@@ -341,14 +446,17 @@ public class GameActivity extends Activity {
 			levelTextView.setText(getString(R.string.level) + level);
 			scoreTextView.setText(getString(R.string.score)+ score);
 
-			StringBuilder imageSort = new StringBuilder("grid")
-					.append(digimons[level - 1]).append("_");
+			StringBuilder imageSort
+					= new StringBuilder("grid").append(digimons[level - 1]).append("_");
 			for (int height = 0; height < boardH; height++)
 				for (int width = 0; width < boardW; width++)
 				{
 					ImageView grid = (ImageView) boardGrid.getChildAt(boardW * height+ width);
-					if (board[height][width]==0) grid.setImageResource(R.mipmap.grid0);
-					else if (board[height][width]<=aimNum)
+					int boardNum = board[height][width];
+					if (boardNum == (int) grid.getTag()) continue;
+					else grid.setTag(boardNum);
+					if (boardNum == 0) grid.setImageResource(R.mipmap.grid0);
+					else if (board[height][width] <= aimNum)
 					{
 						//我要吐槽这里为毛会有警告？？？难道说
 						//imageName = imageSort.toString() + board[heigjt][width];效率更高？！
@@ -363,18 +471,17 @@ public class GameActivity extends Activity {
 						//这么多个append了还建议String？！
 						String imageName = new StringBuilder("grid")
 								.append(digimons[board[height][width] - aimNum - 1])
-								.append("_").append(aimNum).toString();
+								.append("_").append(2 * aimNum).toString();
 						grid.setImageResource(getResources().getIdentifier(imageName,
 								"mipmap", "com.zhengxiaoyao0716.digimon2048"));
 					}
-					grid.setTag(board[height][width]);
 				}
 		}
 
 		@Override
 		public boolean levelUpIsEnterNextLevel(int level, int score) {
 			// TODO Auto-generated method stub
-			final byte[] chooseDialogResult = {0, 0};
+			final boolean[] chooseDialogResult = new boolean[2];
 			new Thread(){
 				@Override
 				public void run() {
@@ -383,21 +490,25 @@ public class GameActivity extends Activity {
 								.setNegativeButton(R.string.replay, new DialogInterface.OnClickListener() {
 									@Override
 									public void onClick(DialogInterface dialog, int which) {
-										chooseDialogResult[0] = 1;
+										chooseDialogResult[0] = true;
 									}
 								})
 								.setPositiveButton(R.string.nextLevel, new DialogInterface.OnClickListener() {
 									@Override
 									public void onClick(DialogInterface dialog, int which) {
-										chooseDialogResult[0] = 1;
-										chooseDialogResult[1] = 1;
+										chooseDialogResult[0] = true;
+										chooseDialogResult[1] = true;
 									}
 								}).setCancelable(false).show();
 					Looper.loop();
 				}
 			}.start();
 			//Wait dialog return.
-			while (chooseDialogResult[0]==0)
+			//我艹，为毛棋盘没有更新？！
+			// 如果UI是主线程里绘制，现在应该已经绘制好了。
+			// 如果是专门的线程，我阻塞主线程管它毛事，继续绘制啊！！！
+			// invalidate家族一系列方法都尝试过了。。。
+			while (!chooseDialogResult[0])
 				try {
 					//Prevent ANR
 					Thread.sleep(100);
@@ -405,15 +516,9 @@ public class GameActivity extends Activity {
 					e.printStackTrace();
 				}
 
-			if (chooseDialogResult[1]==0) return false;
+			if (!chooseDialogResult[1]) return false;
 			digimons = Arrays.copyOf(digimons, level + 1);
-			CHOOSE: while (true)
-			{
-				digimons[level] = 1 + new Random().nextInt(14);
-				for (int index = 0; index < level; index++)
-					if (digimons[index]==digimons[level]) continue CHOOSE;
-				break;
-			}
+			chooseDigimon(level);
 			return true;
 		}
 
@@ -422,8 +527,7 @@ public class GameActivity extends Activity {
 			// TODO Auto-generated method stub
 			((Vibrator) getSystemService(Service.VIBRATOR_SERVICE)).vibrate(1000);
 
-			final byte[] chooseDialogResult = {0, 0};
-			/*
+			final boolean[] chooseDialogResult = new boolean[2];
 
 			new Thread(){
 				@Override
@@ -433,46 +537,29 @@ public class GameActivity extends Activity {
 							.setNegativeButton(R.string.replayLater, new DialogInterface.OnClickListener() {
 								@Override
 								public void onClick(DialogInterface dialog, int which) {
-									chooseDialogResult[0] = 1;
+									chooseDialogResult[0] = true;
 								}
 							})
 							.setPositiveButton(R.string.replayNow, new DialogInterface.OnClickListener() {
 								@Override
 								public void onClick(DialogInterface dialog, int which) {
-									chooseDialogResult[0] = 1;
-									chooseDialogResult[1] = 1;
+									chooseDialogResult[0] = true;
+									chooseDialogResult[1] = true;
 								}
 							}).setCancelable(false).show();
 					Looper.loop();
 				}
 			}.start();
 			//Wait dialog return.
-			while (chooseDialogResult[0]==0)
+			while (chooseDialogResult[0] == false)
 				try {
 					//Prevent ANR
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-			 */
 
-			new SyncDialog.Builder(context).setMessage(R.string.gameOver)
-					.addButton(R.string.replayLater, new OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							chooseDialogResult[0] = 1;
-						}
-					})
-					.addButton(R.string.replayNow, new OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							chooseDialogResult[0] = 1;
-							chooseDialogResult[1] = 1;
-						}
-					}).setCancelable(false).show();
-			//呵呵哒，谁告诉我PopupDialog是阻塞的？？？
-			Log.v("Continue run", "" + chooseDialogResult[1]);
-			return chooseDialogResult[1] != 0;
+			return chooseDialogResult[1];
 		}
 
 		@Override
