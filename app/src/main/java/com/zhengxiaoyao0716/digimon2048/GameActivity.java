@@ -74,17 +74,17 @@ public class GameActivity extends Activity {
 		else //noinspection deprecation
 			gameRelativeLayout.setBackgroundDrawable(new LayerDrawable(gameBackground));
 
-		((ImageView) findViewById(R.id.replayButton)).setOnClickListener(onButtonClickListener);
-		((ImageView) findViewById(R.id.soundButton)).setOnClickListener(onButtonClickListener);
-		((ImageView) findViewById(R.id.offButton)).setOnClickListener(onButtonClickListener);
-		((ImageView) findViewById(R.id.optionsButton)).setOnClickListener(onButtonClickListener);
+		findViewById(R.id.replayButton).setOnClickListener(onButtonClickListener);
+		findViewById(R.id.soundButton).setOnClickListener(onButtonClickListener);
+		findViewById(R.id.offButton).setOnClickListener(onButtonClickListener);
+		findViewById(R.id.optionsButton).setOnClickListener(onButtonClickListener);
 		
 		levelTextView = (TextView) findViewById(R.id.levelTextView);
 		scoreTextView = (TextView) findViewById(R.id.scoreTextView);
 		boardGrid = (GridLayout) findViewById(R.id.boardGrid);
 		boardGrid.setOnTouchListener(onBoardTouchListener);
 		boardH = boardW = 4;
-		aimNum = 64;
+		aimNum = 2048;
 		boardGrid.setRowCount(boardH);
 		boardGrid.setColumnCount(boardW);
 		for (int height = 0; height < boardH; height++)
@@ -255,8 +255,8 @@ public class GameActivity extends Activity {
 
 		final ArrayList<View> digimonViews = new ArrayList<>();
 		for (int digimon : digimonArray) {
-			String imageName = new StringBuilder("grid")
-					.append(digimon).append("_64").toString();
+			String imageName
+					="grid" + digimon;
 			ImageView digimonIV = new ImageView(context);
 			digimonIV.setImageResource(getResources().getIdentifier(imageName,
 					"mipmap", "com.zhengxiaoyao0716.digimon2048"));
@@ -348,9 +348,9 @@ public class GameActivity extends Activity {
 				}
 			}
 		};
-		((Button) chooseDialogView.findViewById(R.id.prevDigimonButton)).setOnClickListener(OnChooseButtonClick);
-		((Button) chooseDialogView.findViewById(R.id.chooseThisButton)).setOnClickListener(OnChooseButtonClick);
-		((Button) chooseDialogView.findViewById(R.id.nextDigimonButton)).setOnClickListener(OnChooseButtonClick);
+		chooseDialogView.findViewById(R.id.prevDigimonButton).setOnClickListener(OnChooseButtonClick);
+		chooseDialogView.findViewById(R.id.chooseThisButton).setOnClickListener(OnChooseButtonClick);
+		chooseDialogView.findViewById(R.id.nextDigimonButton).setOnClickListener(OnChooseButtonClick);
 
 		//展示Dialog
 		chooseAD.show();
@@ -551,7 +551,7 @@ public class GameActivity extends Activity {
 				}
 			}.start();
 			//Wait dialog return.
-			while (chooseDialogResult[0] == false)
+			while (!chooseDialogResult[0])
 				try {
 					//Prevent ANR
 					Thread.sleep(100);
