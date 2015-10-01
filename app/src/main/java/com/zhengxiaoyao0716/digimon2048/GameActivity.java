@@ -32,7 +32,6 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -97,12 +96,7 @@ public class GameActivity extends Activity {
 				grid.setImageResource(R.mipmap.grid0);
 				boardGrid.addView(grid);
 			}
-		try {
-			game2048 = new Game2048(gameCommunicate, boardH, boardW, aimNum);
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		game2048 = new Game2048(gameCommunicate, boardH, boardW, aimNum);
 	}
 	
 	@Override
@@ -116,7 +110,7 @@ public class GameActivity extends Activity {
 	protected void onPause()
 	{
 		super.onPause();
-		game2048.quitGame();
+		game2048.finishGame();
 	}
 
 	@Override
@@ -133,7 +127,6 @@ public class GameActivity extends Activity {
 	{
 		@Override
 		public void onClick(final View v) {
-			// TODO Auto-generated method stub
 			switch (v.getId())
 			{
 				case R.id.replayButton:
@@ -203,7 +196,6 @@ public class GameActivity extends Activity {
 	private final View.OnTouchListener onBoardTouchListener = new View.OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-			// TODO: Implement this method
 			if (MotionEvent.ACTION_DOWN==event.getAction())
 			{
 				touchX = event.getX();
@@ -233,17 +225,14 @@ public class GameActivity extends Activity {
 				}
 				else
 				{
-					try {
-						game2048.action(((touchY + touchX > 0) ? 0 : 2)
-								+ ((touchY - touchX > 0) ? 0 : 1));
-					} catch (IllegalArgumentException e) {
-						e.printStackTrace();
-					}
+					game2048.action(((touchY + touchX > 0) ? 0 : 2)
+							+ ((touchY - touchX > 0) ? 0 : 1));
 				}
 			}
 			return true;
 		}
 	};
+
 	//选择数码宝贝
 	private final static int DIGIMON_NUMS = 14;
 	private void chooseDigimon(final int posInDigimons)
@@ -360,7 +349,6 @@ public class GameActivity extends Activity {
 	{
 		@Override
 		public Map<String, Object> loadData() {
-			// TODO Auto-generated method stub
 			int[] dataBackup = {boardH, boardW, aimNum};
 			//load game data
 			HashMap<String, Object> dataMap = new HashMap<>();
@@ -412,7 +400,6 @@ public class GameActivity extends Activity {
 
 		@Override
 		public boolean saveData(Map<String, Object> dataMap) {
-			// TODO Auto-generated method stub
 			//save game data
 			try {
 				//read map, write json
@@ -442,9 +429,8 @@ public class GameActivity extends Activity {
 
 		@Override
 		public void showData(int level, int score, int[][] board) {
-			// TODO Auto-generated method stub
 			levelTextView.setText(getString(R.string.level) + level);
-			scoreTextView.setText(getString(R.string.score)+ score);
+			scoreTextView.setText(getString(R.string.score) + score);
 
 			StringBuilder imageSort
 					= new StringBuilder("grid").append(digimons[level - 1]).append("_");
@@ -479,98 +465,7 @@ public class GameActivity extends Activity {
 		}
 
 		@Override
-		public boolean levelUpIsEnterNextLevel(int level, int score) {
-			// TODO Auto-generated method stub
-			final boolean[] chooseDialogResult = new boolean[2];
-			new Thread(){
-				@Override
-				public void run() {
-					Looper.prepare();
-						new AlertDialog.Builder(context).setMessage(R.string.levelUp)
-								.setNegativeButton(R.string.replay, new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog, int which) {
-										chooseDialogResult[0] = true;
-									}
-								})
-								.setPositiveButton(R.string.nextLevel, new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog, int which) {
-										chooseDialogResult[0] = true;
-										chooseDialogResult[1] = true;
-									}
-								}).setCancelable(false).show();
-					Looper.loop();
-				}
-			}.start();
-			//Wait dialog return.
-			//我艹，为毛棋盘没有更新？！
-			// 如果UI是主线程里绘制，现在应该已经绘制好了。
-			// 如果是专门的线程，我阻塞主线程管它毛事，继续绘制啊！！！
-			// invalidate家族一系列方法都尝试过了。。。
-			while (!chooseDialogResult[0])
-				try {
-					//Prevent ANR
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-
-			if (!chooseDialogResult[1]) return false;
-			digimons = Arrays.copyOf(digimons, level + 1);
-			chooseDigimon(level);
-			return true;
-		}
-
-		@Override
-		public boolean gameOverIsReplay(int level, int score) {
-			// TODO Auto-generated method stub
-			((Vibrator) getSystemService(Service.VIBRATOR_SERVICE)).vibrate(1000);
-
-			final boolean[] chooseDialogResult = new boolean[2];
-
-			new Thread(){
-				@Override
-				public void run() {
-					Looper.prepare();
-					new AlertDialog.Builder(context).setMessage(R.string.gameOver)
-							.setNegativeButton(R.string.replayLater, new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog, int which) {
-									chooseDialogResult[0] = true;
-								}
-							})
-							.setPositiveButton(R.string.replayNow, new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog, int which) {
-									chooseDialogResult[0] = true;
-									chooseDialogResult[1] = true;
-								}
-							}).setCancelable(false).show();
-					Looper.loop();
-				}
-			}.start();
-			//Wait dialog return.
-			while (!chooseDialogResult[0])
-				try {
-					//Prevent ANR
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-
-			return chooseDialogResult[1];
-		}
-
-		@Override
-		public boolean saveFailedIsStillQuit() {
-			// TODO Auto-generated method stub
-			return true;
-		}
-
-		@Override
 		public void noChangeRespond() {
-			// TODO Auto-generated method stub
 			((Vibrator) getSystemService(Service.VIBRATOR_SERVICE)).vibrate(300);
 		}
 
@@ -584,6 +479,47 @@ public class GameActivity extends Activity {
 		public void mergedRespond() {
 			// TODO Auto-generated method stub
 			
+		}
+
+		@Override
+		public void saveFailedIsStillQuit(Informer informer) {
+			informer.commit(true);
+		}
+
+		@Override
+		public void gameEndIsReplay(int level, int score, final Informer informer) {
+			new AlertDialog.Builder(context).setMessage(R.string.gameOver)
+					.setNegativeButton(R.string.replayLater, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							informer.commit(false);
+						}
+					})
+					.setPositiveButton(R.string.replayNow, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							informer.commit(true);
+						}
+					}).setCancelable(false).show();
+		}
+
+		@Override
+		public void levelUpIsEnterNextLevel(final int level, final int score, final Informer informer) {
+			new AlertDialog.Builder(context).setMessage(R.string.levelUp)
+					.setNegativeButton(R.string.replay, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							informer.commit(false);
+						}
+					})
+					.setPositiveButton(R.string.nextLevel, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							digimons = Arrays.copyOf(digimons, level + 1);
+							chooseDigimon(level);
+							informer.commit(true);
+						}
+					}).setCancelable(false).show();
 		}
 	};
 }
