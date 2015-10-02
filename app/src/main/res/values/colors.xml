@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--GameActivity-->
+    <color name="gameBgColor0">#ff0b0b</color>
+    <color name="gameBgColor1">#ff6600</color>
+    <color name="gameBgColor2">#eeee00</color>
+    <color name="gameBgColor3">#22cc00</color>
+    <color name="gameBgColor4">#33cc99</color>
+    <color name="gameBgColor5">#2e2ecc</color>
+    <color name="gameBgColor6">#bb00ee</color>
+    <color name="gameBgColor7">#333333</color>
+    <color name="gameBgColor8">#eeeeee</color>
+
+</resources>

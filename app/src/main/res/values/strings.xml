@@ -2,7 +2,6 @@
 <resources>
 
 	<!--MainActivity-->
-
     <string name="app_name">数码宝贝2048</string>
 	<string name="share">分享</string>
 	<string name="about">关于</string>
@@ -21,13 +20,13 @@
 		我在玩超级精美的《数码宝贝2048》，你也来吧！
 	</string>
 	<string name="helpString0">
-		手指滑动就能上下左右，让数码宝贝进化吧！
+		每次滑动都会随机获得一只幼年体数码宝贝或一枚数码蛋。
 	</string>
 	<string name="helpString1">
-		注意到棋盘右侧按钮了吗？
+		手指滑动就能上下左右，让数码宝贝进化吧！
 	</string>
 	<string name="helpString2">
-		每次滑动都会随机获得一只幼年体数码宝贝或一枚数码蛋。
+		当前数码宝贝进化到究极体后，还可以加入新的伙伴继续进化哦！
 	</string>
 
 	<!--GameActivity-->

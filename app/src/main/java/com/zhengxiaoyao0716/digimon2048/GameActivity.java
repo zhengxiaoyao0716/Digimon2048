@@ -3,13 +3,13 @@ package com.zhengxiaoyao0716.digimon2048;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import com.zhengxiaoyao0716.adapter.ChoosePagerAdapter;
+import android.content.res.Resources;
+import com.zhengxiaoyao0716.dialog.ChooseDigimonDialog;
 import com.zhengxiaoyao0716.game2048.*;
 
 import android.app.Activity;
@@ -18,16 +18,13 @@ import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Looper;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
-import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -58,26 +55,29 @@ public class GameActivity extends Activity {
 		context = this;
 
 		Drawable[] gameBackground = new Drawable[2];
-		gameBackground[0] = new ColorDrawable(Color.parseColor("#28A306"));
+		Resources resources = getResources();
+		//随机取色
+		int colorId = resources.getIdentifier("gameBgColor" + new Random().nextInt(9),
+				"color", "com.zhengxiaoyao0716.digimon2048");
+		gameBackground[0] = new ColorDrawable(resources.getColor(colorId));
 		//被这倒霉玩意儿恶心到了，要是按网上的方法改API，只能越改越高。。。
 		//而且在xml中也没法根据SDK版本来if。。。
 		if (Build.VERSION.SDK_INT >= 21) {
 			gameBackground[1] = getDrawable(R.mipmap.cover_body);
 		}
 		else //noinspection deprecation
-			gameBackground[1] = getResources().getDrawable(R.mipmap.cover_body);
-
+			gameBackground[1] = resources.getDrawable(R.mipmap.cover_body);
 		gameRelativeLayout = (RelativeLayout) findViewById(R.id.gameRelativeLayout);
 		if (Build.VERSION.SDK_INT >= 16)
 			gameRelativeLayout.setBackground(new LayerDrawable(gameBackground));
 		else //noinspection deprecation
 			gameRelativeLayout.setBackgroundDrawable(new LayerDrawable(gameBackground));
 
+		//设置按钮的监听
 		findViewById(R.id.replayButton).setOnClickListener(onButtonClickListener);
 		findViewById(R.id.soundButton).setOnClickListener(onButtonClickListener);
 		findViewById(R.id.offButton).setOnClickListener(onButtonClickListener);
-		findViewById(R.id.optionsButton).setOnClickListener(onButtonClickListener);
-		
+		//初始化控件
 		levelTextView = (TextView) findViewById(R.id.levelTextView);
 		scoreTextView = (TextView) findViewById(R.id.scoreTextView);
 		boardGrid = (GridLayout) findViewById(R.id.boardGrid);
@@ -137,14 +137,22 @@ public class GameActivity extends Activity {
 									new DialogInterface.OnClickListener() {
 										public void onClick(DialogInterface d, int i) {
 											digimons = new int[1];
-											chooseDigimon(0);
-											game2048.replay(false);
+											new ChooseDigimonDialog(context) {
+												@Override
+												public void doAfterChoose() {
+													game2048.replay(false);
+												}
+											}.chooseDigimon(digimons, 0);
 										}})
 							.setPositiveButton(R.string.replay,
 									new DialogInterface.OnClickListener() {
 										public void onClick(DialogInterface d, int i) {
-											chooseDigimon(digimons.length - 1);
-											game2048.replay(true);
+											new ChooseDigimonDialog(context) {
+												@Override
+												public void doAfterChoose() {
+													game2048.replay(false);
+												}
+											}.chooseDigimon(digimons, digimons.length - 1);
 										}
 									}).show();
 				}break;
@@ -183,11 +191,6 @@ public class GameActivity extends Activity {
 										}
 									}).show();
 				}break;
-				case R.id.optionsButton:
-				{
-					new AlertDialog.Builder(context)
-							.setMessage("options").show();
-				}break;
 			}
 		}
 	};
@@ -207,6 +210,7 @@ public class GameActivity extends Activity {
 				touchY -= event.getY();
 				if (touchX >= -16 && touchX <= 16 && touchY >= -16 && touchY <= 16)
 				{
+					//显示普通模式数字
 					float viewH = v.getHeight(), viewW = v.getWidth();
 					float clickH = event.getY(), clickW = event.getX();
 					int height, width;
@@ -232,118 +236,6 @@ public class GameActivity extends Activity {
 			return true;
 		}
 	};
-
-	//选择数码宝贝
-	private final static int DIGIMON_NUMS = 14;
-	private void chooseDigimon(final int posInDigimons)
-	{
-		final ArrayList<Integer> digimonArray = new ArrayList<>(DIGIMON_NUMS);
-		for (int i = 1; i <= DIGIMON_NUMS; i++) digimonArray.add(i);
-		for (int index = 0; index < posInDigimons; index++)
-			digimonArray.remove((Integer)digimons[index]);
-
-		final ArrayList<View> digimonViews = new ArrayList<>();
-		for (int digimon : digimonArray) {
-			String imageName
-					="grid" + digimon;
-			ImageView digimonIV = new ImageView(context);
-			digimonIV.setImageResource(getResources().getIdentifier(imageName,
-					"mipmap", "com.zhengxiaoyao0716.digimon2048"));
-			digimonViews.add(digimonIV);
-		}
-
-		//错误的做法，View不能复用！
-		/*
-		//首位插入末位的View
-		digimonViews.add(0, digimonViews.get(digimonViews.size() - 1));
-		//末尾增加首位（现在是次位）的View
-		digimonViews.add(0, digimonViews.get(1));
-		*/
-		//然而图片是可以复用的
-		//首位插入末位的图片
-		ImageView tempDigimonIV = new ImageView(context);
-		tempDigimonIV .setImageDrawable(
-				((ImageView) digimonViews.get(digimonViews.size() - 1)).getDrawable());
-		digimonViews.add(0, tempDigimonIV);
-		//末尾增加首位（现在是次位）的图片
-		tempDigimonIV = new ImageView(context);
-		tempDigimonIV .setImageDrawable(
-				((ImageView) digimonViews.get(1)).getDrawable());
-		digimonViews.add(tempDigimonIV);
-
-		//加载布局
-		View chooseDialogView = getLayoutInflater().inflate(R.layout.dialog_choose_digimon, null);
-		final AlertDialog chooseAD = new AlertDialog.Builder(context)
-				.setTitle(R.string.pleaseChoose).setView(chooseDialogView)
-				.setCancelable(false).create();
-
-		//设置ViewPager
-		final ViewPager chooseVP = (ViewPager) chooseDialogView.findViewById(R.id.chooseViewPager);
-		chooseVP.setAdapter(new ChoosePagerAdapter(digimonViews));
-		chooseVP.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-			@Override
-			public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-				//其实是digimonViews.size() - 2，也就是digimonArray - 1 + 1;
-				//第二个参数false。默认true是平滑过渡，但现在其实已经过渡完成，自然应当是false
-				if (position == 0 && positionOffset == 0) chooseVP.setCurrentItem(digimonArray.size(), false);
-				else if (position == digimonViews.size() - 1 && positionOffset == 0)
-					chooseVP.setCurrentItem(1, false);
-				else if (positionOffset == 0) digimons[posInDigimons] = digimonArray.get(position - 1);
-			}
-
-			@Override
-			public void onPageSelected(int position) {
-				//在这里做跳转效果并不理想。onPageSelected方法是在跳转过程中调用的
-				//所以会导致首位连接处的跳转少半个周期
-			}
-
-			@Override
-			public void onPageScrollStateChanged(int state) {
-			}
-		});
-		//从随机位置开始，重要的是一定不能是首末位置（0、digimonViews.size() - 1)
-		chooseVP.setCurrentItem(1 + new Random().nextInt(digimonArray.size()));
-
-		//设置Button
-		OnClickListener OnChooseButtonClick = new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				switch (v.getId())
-				{
-					case R.id.prevDigimonButton:
-						chooseVP.setCurrentItem(chooseVP.getCurrentItem() - 1);
-						break;
-					case R.id.chooseThisButton:
-					{
-						//用户更换数码宝贝后棋盘需要刷新，因为非阻塞。。。
-						for (int height = 0; height < boardH; height++)
-							for (int width = 0; width < boardW; width++) {
-								ImageView grid = (ImageView) boardGrid.getChildAt(
-										boardW * height + width);
-								int gridNum = (int) grid.getTag();
-								if (gridNum != 0 && gridNum < aimNum) {
-									String imageName = new StringBuilder("grid")
-											.append(digimons[posInDigimons]).append("_")
-											.append(gridNum).toString();
-									grid.setImageResource(getResources().getIdentifier(imageName,
-											"mipmap", "com.zhengxiaoyao0716.digimon2048"));
-								}
-							}
-						chooseAD.dismiss();
-					}break;
-					case R.id.nextDigimonButton:
-						chooseVP.setCurrentItem(chooseVP.getCurrentItem() + 1);
-						break;
-				}
-			}
-		};
-		chooseDialogView.findViewById(R.id.prevDigimonButton).setOnClickListener(OnChooseButtonClick);
-		chooseDialogView.findViewById(R.id.chooseThisButton).setOnClickListener(OnChooseButtonClick);
-		chooseDialogView.findViewById(R.id.nextDigimonButton).setOnClickListener(OnChooseButtonClick);
-
-		//展示Dialog
-		chooseAD.show();
-	}
 
 	private final Game2048Communicate gameCommunicate = new Game2048Communicate()
 	{
@@ -391,8 +283,6 @@ public class GameActivity extends Activity {
 				boardH = dataBackup[0];
 				boardW = dataBackup[1];
 				aimNum = dataBackup[2];
-				digimons = new int[1];
-				chooseDigimon(0);
 				return null;
 			}
 			return dataMap;
@@ -434,6 +324,7 @@ public class GameActivity extends Activity {
 
 			StringBuilder imageSort
 					= new StringBuilder("grid").append(digimons[level - 1]).append("_");
+			Resources resources = getResources();
 			for (int height = 0; height < boardH; height++)
 				for (int width = 0; width < boardW; width++)
 				{
@@ -449,7 +340,7 @@ public class GameActivity extends Activity {
 						String imageName
 								= new StringBuilder(imageSort)
 								.append(board[height][width]).toString();
-						grid.setImageResource(getResources().getIdentifier(imageName,
+						grid.setImageResource(resources.getIdentifier(imageName,
 								"mipmap", "com.zhengxiaoyao0716.digimon2048"));
 					}
 					else
@@ -458,7 +349,7 @@ public class GameActivity extends Activity {
 						String imageName = new StringBuilder("grid")
 								.append(digimons[board[height][width] - aimNum - 1])
 								.append("_").append(2 * aimNum).toString();
-						grid.setImageResource(getResources().getIdentifier(imageName,
+						grid.setImageResource(resources.getIdentifier(imageName,
 								"mipmap", "com.zhengxiaoyao0716.digimon2048"));
 					}
 				}
@@ -482,12 +373,23 @@ public class GameActivity extends Activity {
 		}
 
 		@Override
-		public void saveFailedIsStillQuit(Informer informer) {
+		public void loadFailedIsStartNew(final Informer informer) {
+			digimons = new int[1];
+			new ChooseDigimonDialog(context) {
+				@Override
+				public void doAfterChoose() {
+					informer.commit(true);
+				}
+			}.chooseDigimon(digimons, 0);
+		}
+
+		@Override
+		public void saveFailedIsStillFinish(final Informer informer) {
 			informer.commit(true);
 		}
 
 		@Override
-		public void gameEndIsReplay(int level, int score, final Informer informer) {
+		public void gameEndReplayThisLevel(int level, int score, final Informer informer) {
 			new AlertDialog.Builder(context).setMessage(R.string.gameOver)
 					.setNegativeButton(R.string.replayLater, new DialogInterface.OnClickListener() {
 						@Override
@@ -504,7 +406,7 @@ public class GameActivity extends Activity {
 		}
 
 		@Override
-		public void levelUpIsEnterNextLevel(final int level, final int score, final Informer informer) {
+		public void levelUpEnterNextLevel(final int level, final int score, final Informer informer) {
 			new AlertDialog.Builder(context).setMessage(R.string.levelUp)
 					.setNegativeButton(R.string.replay, new DialogInterface.OnClickListener() {
 						@Override
@@ -516,8 +418,12 @@ public class GameActivity extends Activity {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							digimons = Arrays.copyOf(digimons, level + 1);
-							chooseDigimon(level);
-							informer.commit(true);
+							new ChooseDigimonDialog(context) {
+								@Override
+								public void doAfterChoose() {
+									informer.commit(true);
+								}
+							}.chooseDigimon(digimons, level);
 						}
 					}).setCancelable(false).show();
 		}

@@ -36,15 +36,6 @@
         android:layout_marginTop="10dp"
         android:src="@mipmap/button_off" />
 
-    <ImageView
-        android:id="@+id/optionsButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:src="@mipmap/button_options"/>
-
     <TextView
         android:id="@+id/levelTextView"
         android:layout_width="wrap_content"

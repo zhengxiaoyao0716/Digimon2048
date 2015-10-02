@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.util.Random;
+
 public class MainActivity extends Activity {
 
 	@Override
@@ -44,21 +46,17 @@ public class MainActivity extends Activity {
 		
 		case R.id.aboutItem:
 		{
-			AlertDialog.Builder aboutDialog = new AlertDialog.Builder(this);
-			aboutDialog.setTitle(getString(R.string.about));
-			String copyright = getString(R.string.copyright);
-			aboutDialog.setMessage(copyright);
-			aboutDialog.setNegativeButton(getString(R.string.attentionMe),
-			new DialogInterface.OnClickListener(){
-				public void onClick(DialogInterface d, int i)
-				{
-					Intent intent = new Intent(Intent.ACTION_VIEW,
-					Uri.parse("https://github.com/zhengxiaoyao0716/Digimon2048"));
-					startActivity(intent);
-				}
-			});
-			aboutDialog.setPositiveButton(getString(R.string.iKnow), null);
-			aboutDialog.show();
+			new AlertDialog.Builder(this).setTitle(getString(R.string.about))
+					.setMessage(R.string.copyright)
+					.setPositiveButton(R.string.iKnow, null)
+					.setNegativeButton(R.string.attentionMe,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface d, int i) {
+							Intent intent = new Intent(Intent.ACTION_VIEW,
+									Uri.parse("http://zhengxiaoyao0716.lofter.com/"));
+							startActivity(intent);
+						}
+					}).show();
 		}break;
 		
 		case R.id.exitItem:
@@ -86,9 +84,9 @@ public class MainActivity extends Activity {
 		final ImageView helpButton =
 		(ImageView)findViewById(R.id.helpButton);
 		helpButton.setImageResource(R.mipmap.help1);
-		int rand = R.string.helpString0+(int)(Math.random()*3);
-		String helpString = getString(rand);
-		Toast helpToast = Toast.makeText(this, helpString, Toast.LENGTH_SHORT);
+		Toast helpToast = Toast.makeText(this,
+				R.string.helpString0 + new Random().nextInt(3),
+				Toast.LENGTH_SHORT);
 		helpToast.setGravity(Gravity.CENTER, 0, 0);
 		helpToast.show();
 		new Handler().postDelayed(new Runnable(){
