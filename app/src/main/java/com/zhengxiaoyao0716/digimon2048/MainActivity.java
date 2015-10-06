@@ -35,15 +35,6 @@ public class MainActivity extends Activity {
 	{
 		switch (item.getItemId())
 		{
-		case R.id.shareItem:
-		{
-			Intent intent = new Intent(Intent.ACTION_SEND);
-			intent.setType("text/plain");
-			intent.putExtra(Intent.EXTRA_TEXT,
-			getString(R.string.shareString));
-			startActivity(intent);
-		}break;
-		
 		case R.id.aboutItem:
 		{
 			new AlertDialog.Builder(this).setTitle(getString(R.string.about))

@@ -12,9 +12,6 @@ import com.zhengxiaoyao0716.digimon2048.R;
 import java.util.ArrayList;
 import java.util.Random;
 
-/**
- * Created by pc on 2015/10/2.
- */
 public abstract class ChooseDigimonDialog {
     Context context;
     private static final int DIGIMON_NUMS = 14;

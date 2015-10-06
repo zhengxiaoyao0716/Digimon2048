@@ -3,43 +3,84 @@ package com.zhengxiaoyao0716.digimon2048;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.Toast;
+import com.zhengxiaoyao0716.data.Records;
+
+import java.util.List;
+import java.util.Map;
 
 public class RankActivity extends Activity
 {
+
+	private List<? extends Map<String,?>> rankListData;
     @Override
     protected void onCreate(Bundle savedInstanceState)
 	{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rank);
-		loadRanking();
-		onTodayClick();
 		
 		ActionBar actionBar = getActionBar();
 		if (actionBar!=null)
 			actionBar.setDisplayHomeAsUpEnabled(true);
+
+		loadMyRecord();
     }
-	
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		getMenuInflater().inflate(R.menu.menu_rank, menu);
+		return true;
+	}
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-		finish();
+		switch (item.getItemId())
+		{
+			case R.id.home:
+				finish();
+				break;
+
+			case R.id.myRecord:
+				loadMyRecord();
+				break;
+
+			case R.id.dayRank:
+			{
+			}break;
+
+			case R.id.weekRank:
+			{
+			}break;
+
+			case R.id.lowestRank:
+			{
+			}break;
+		}
 		return true;
 	}
-	
-	private void onTodayClick()
-	{
-		ListView rankingList = (ListView)findViewById(R.id.rankingList);
-		String[] playerName = {"wait", "wait"};
-		ArrayAdapter<String> rankingAdapter = new ArrayAdapter<>(this,
-				android.R.layout.simple_expandable_list_item_1, playerName);
-		rankingList.setAdapter(rankingAdapter);
+
+	private void loadMyRecord() {
+		rankListData = Records.getRecordList(this);
+		//rankListData = new SqlRecords(this).list();
+		if (rankListData == null)
+			Toast.makeText(this, R.string.nullRecords, Toast.LENGTH_LONG).show();
+		else refreshList();
 	}
-	
-	private void loadRanking()
+	private void refreshList()
 	{
-		///**/
+		ListView rankList = (ListView) findViewById(R.id.rankList);
+		rankList.setAdapter(new SimpleAdapter(this, rankListData, R.layout.list_item_rank,
+				new String[]{"number", "score", "name", "time"},
+				new int[]{
+						R.id.rankListItemNumber,
+						R.id.rankListItemScore,
+						R.id.rankListItemName,
+						R.id.rankListItemTime
+				}));
 	}
 }

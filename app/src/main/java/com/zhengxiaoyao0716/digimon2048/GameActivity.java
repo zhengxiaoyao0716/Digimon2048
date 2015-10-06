@@ -8,7 +8,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.util.Base64;
+import com.zhengxiaoyao0716.data.Records;
+import com.zhengxiaoyao0716.data.SqlRecords;
 import com.zhengxiaoyao0716.dialog.ChooseDigimonDialog;
 import com.zhengxiaoyao0716.game2048.*;
 
@@ -210,7 +214,6 @@ public class GameActivity extends Activity {
 				touchY -= event.getY();
 				if (touchX >= -16 && touchX <= 16 && touchY >= -16 && touchY <= 16)
 				{
-					//显示普通模式数字
 					float viewH = v.getHeight(), viewW = v.getWidth();
 					float clickH = event.getY(), clickW = event.getX();
 					int height, width;
@@ -222,9 +225,11 @@ public class GameActivity extends Activity {
 					int num = (int) grid.getTag();
 					if (num != 0 && num <= aimNum)
 					{
+						//显示普通模式数字
 						String imageName = "grid0_" + num;
 						grid.setImageResource(getResources().getIdentifier(imageName,
 								"mipmap", "com.zhengxiaoyao0716.digimon2048"));
+						grid.setTag(0);
 					}
 				}
 				else
@@ -254,10 +259,11 @@ public class GameActivity extends Activity {
 				}
 				inputStream.close();
 				arrayOutputStream.close();
-				String dataStr = new String(arrayOutputStream.toByteArray());
 
 				//read json, write map
-				JSONObject dataJO = new JSONObject(dataStr);
+				JSONObject dataJO = new JSONObject(new String(
+						Base64.decode(arrayOutputStream.toByteArray(), Base64.DEFAULT)
+				));
 				aimNum = dataJO.getInt("aimNum");
 				dataMap.put("aimNum", aimNum);
 				dataMap.put("level", dataJO.getInt("level"));
@@ -280,6 +286,7 @@ public class GameActivity extends Activity {
 				for (int index = 0; index < digimonNums; index++)
 					digimons[index] = digimonJA.getInt(index);
 			} catch (Exception e) {
+				e.printStackTrace();
 				boardH = dataBackup[0];
 				boardW = dataBackup[1];
 				aimNum = dataBackup[2];
@@ -308,10 +315,14 @@ public class GameActivity extends Activity {
 				//write file
 				FileOutputStream outputStream = openFileOutput("gameData",
 						Activity.MODE_PRIVATE);
-				outputStream.write(dataJO.toString().getBytes());
+				outputStream.write(
+						//虽然是开源的，还是加密一下吧，至少拦住小白
+						Base64.encode(dataJO.toString().getBytes(), Base64.DEFAULT)
+				);
 				outputStream.flush();
 				outputStream.close();
 			} catch (Exception e) {
+				e.printStackTrace();
 				return false;
 			}
 			return true;
@@ -322,8 +333,7 @@ public class GameActivity extends Activity {
 			levelTextView.setText(getString(R.string.level) + level);
 			scoreTextView.setText(getString(R.string.score) + score);
 
-			StringBuilder imageSort
-					= new StringBuilder("grid").append(digimons[level - 1]).append("_");
+			String imageSort = String.format("grid%d_", digimons[level - 1]);
 			Resources resources = getResources();
 			for (int height = 0; height < boardH; height++)
 				for (int width = 0; width < boardW; width++)
@@ -346,9 +356,8 @@ public class GameActivity extends Activity {
 					else
 					{
 						//这么多个append了还建议String？！
-						String imageName = new StringBuilder("grid")
-								.append(digimons[board[height][width] - aimNum - 1])
-								.append("_").append(2 * aimNum).toString();
+						String imageName = String.format("grid%d_%d",
+								digimons[board[height][width] - aimNum - 1], 2 * aimNum);
 						grid.setImageResource(resources.getIdentifier(imageName,
 								"mipmap", "com.zhengxiaoyao0716.digimon2048"));
 					}
@@ -390,7 +399,24 @@ public class GameActivity extends Activity {
 
 		@Override
 		public void gameEndReplayThisLevel(int level, int score, final Informer informer) {
+			SharedPreferences sharedPreference
+					= getSharedPreferences("Records", MODE_PRIVATE);
+			if (score < sharedPreference.getInt("minScore" + level, 0))
+			{
+				//写入最低成绩
+				SharedPreferences.Editor editor = sharedPreference.edit();
+				editor.putInt("minScore" + level, score);
+				editor.commit();
+			}
+			else if (score > sharedPreference.getInt("maxScore" + level, 0))
+			{
+				//新的最高记录
+				SharedPreferences.Editor editor = sharedPreference.edit();
+				editor.putInt("maxScore" + level, score);
+				editor.commit();
+			}
 			new AlertDialog.Builder(context).setMessage(R.string.gameOver)
+					//TODO 在线排名系统
 					.setNegativeButton(R.string.replayLater, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
@@ -403,11 +429,26 @@ public class GameActivity extends Activity {
 							informer.commit(true);
 						}
 					}).setCancelable(false).show();
+
+			//写入一次游戏记录
+			Records.add(context, "Default", level, score);
+			//new SqlRecords(context).insert("Default", level, score);
 		}
 
 		@Override
 		public void levelUpEnterNextLevel(final int level, final int score, final Informer informer) {
+			SharedPreferences sharedPreference
+					= getSharedPreferences("Records", MODE_PRIVATE);
+			if (score > sharedPreference.getInt("maxScore" + level, 0))
+			{
+				//新的最高记录
+				SharedPreferences.Editor editor = sharedPreference.edit();
+				editor.putInt("maxScore" + level, score);
+				editor.commit();
+			}
+
 			new AlertDialog.Builder(context).setMessage(R.string.levelUp)
+					//TODO 在线排名系统
 					.setNegativeButton(R.string.replay, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
@@ -426,6 +467,10 @@ public class GameActivity extends Activity {
 							}.chooseDigimon(digimons, level);
 						}
 					}).setCancelable(false).show();
+
+			//写入一次游戏记录
+			Records.add(context, "Default", level, score);
+			//new SqlRecords(context).insert("Default", level, score);
 		}
 	};
 }

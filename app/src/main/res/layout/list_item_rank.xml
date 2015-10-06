@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:gravity="center_vertical" >
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="15dp"
+            android:layout_marginEnd="15dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="28sp"
+            android:text="No.08:"
+            android:id="@+id/rankListItemNumber" />
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="15dp"
+            android:layout_marginEnd="15dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="28sp"
+            android:text="88888分"
+            android:id="@+id/rankListItemScore" />
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|end"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:singleLine="true"
+                android:text="namename"
+                android:id="@+id/rankListItemName" />
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|end"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="MM/dd HH:mm"
+                android:id="@+id/rankListItemTime"/>
+
+    </LinearLayout>
+
+</LinearLayout>

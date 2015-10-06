@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<!--MainActivity-->
+	<!--
+	MainActivity
+	-->
     <string name="app_name">数码宝贝2048</string>
 	<string name="share">分享</string>
 	<string name="about">关于</string>
@@ -16,9 +18,6 @@
     <string name="attentionMe">关注我</string>
     <string name="iKnow">知道了</string>
 
-	<string name="shareString">
-		我在玩超级精美的《数码宝贝2048》，你也来吧！
-	</string>
 	<string name="helpString0">
 		每次滑动都会随机获得一只幼年体数码宝贝或一枚数码蛋。
 	</string>
@@ -29,7 +28,9 @@
 		当前数码宝贝进化到究极体后，还可以加入新的伙伴继续进化哦！
 	</string>
 
-	<!--GameActivity-->
+	<!--
+	GameActivity
+	-->
 	<string name="pleaseChoose">请选择你的新伙伴：</string>
 	<string name="prevDigimon">上一个</string>
 	<string name="chooseThis">就选你了</string>
@@ -37,32 +38,37 @@
 
 	<string name="level">关卡：</string>
 	<string name="score">分数：</string>
+
 	<string name="cancel">我点错了</string>
 	<string name="restart">重新开始</string>
 	<string name="replay">重玩本关</string>
+
+	<!--<string name="cancel">我点错了</string>-->
 	<string name="closeSound">关闭音效</string>
 	<string name="playSound">打卡音效</string>
 	<string name="closeMusic">关闭音乐</string>
 	<string name="playMusic">播放音乐</string>
+
+	<!--<string name="cancel">我点错了</string>-->
 	<string name="quitGame">回到标题</string>
 	<string name="exitApp">退出应用</string>
-	<string name="levelUp">
-		你的数码宝贝已进化成为究极体了！\n
-		获得新的数码宝贝，继续挑战吧！
-	</string>
+
+	<string name="levelUp">恭喜晋级！</string>
+	<!--<string name="replay">重玩本关</string>-->
 	<string name="nextLevel">继续挑战</string>
-	<string name="gameOver">
-		游戏结束，再次挑战吗？\n
-	</string>
+
+	<string name="gameOver">游戏结束、</string>
 	<string name="replayLater">我想确认一下</string>
 	<string name="replayNow">好吧再来一次</string>
 
-	<!--RankActivity-->
-	<string-array name="rankingItem">
-		<item>本机记录</item>
-		<item>今日排行</item>
-		<item>本周排行</item>
-		<item>囧排行</item>
-	</string-array>
+	<!--
+	RankActivity
+	-->
+	<string name="myRecord">我的记录</string>
+	<string name="dayRank">今日排名</string>
+	<string name="weekRank">本周排行</string>
+	<string name="lowestRank">囧排行</string>
+
+	<string name="nullRecords">抱歉，排行数据获取失败</string>
 
 </resources>
