@@ -9,12 +9,10 @@ import android.os.Build;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by pc on 2015/10/7.
- */
 public class Sounds {
     private SoundPool soundPool;
     private Map<String, Integer> soundIds;
+
     private Sounds()
     {
         if (Build.VERSION.SDK_INT >= 21)
@@ -38,9 +36,10 @@ public class Sounds {
     public void loadSound(Context context, final String name, int resourceId)
     { soundIds.put(name, soundPool.load(context, resourceId, 1)); }
 
+    public boolean soundsSwitch;
     public void playSound(String name)
     {
-        if (soundIds.containsKey(name))
+        if (soundsSwitch && soundIds.containsKey(name))
             soundPool.play(soundIds.get(name), 1, 1, 0, 0, 1);
     }
 }
