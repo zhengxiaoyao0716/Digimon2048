@@ -11,7 +11,7 @@ import java.util.Random;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.util.Base64;
-import com.zhengxiaoyao0716.data.SqlRecords;
+import com.zhengxiaoyao0716.data.Records;
 import com.zhengxiaoyao0716.dialog.ChooseDigimonDialog;
 import com.zhengxiaoyao0716.game2048.*;
 
@@ -142,7 +142,7 @@ public class GameActivity extends Activity {
 											new ChooseDigimonDialog(context) {
 												@Override
 												public void doAfterChoose() {
-													game2048.replay(false);
+													game2048.replay(true);
 												}
 											}.chooseDigimon(digimons, digimons.length - 1);
 										}
@@ -208,7 +208,7 @@ public class GameActivity extends Activity {
 						String imageName = "grid0_" + num;
 						grid.setImageResource(getResources().getIdentifier(imageName,
 								"mipmap", "com.zhengxiaoyao0716.digimon2048"));
-						grid.setTag(0);
+						grid.setTag(-1);
 					}
 				}
 				else
@@ -374,23 +374,9 @@ public class GameActivity extends Activity {
 		}
 
 		@Override
-		public void gameEndReplayThisLevel(int level, int score, final Informer informer) {
-			SharedPreferences sharedPreference
-					= getSharedPreferences("Records", MODE_PRIVATE);
-			if (score < sharedPreference.getInt("minScore" + level, 500))
-			{
-				//写入最低成绩
-				SharedPreferences.Editor editor = sharedPreference.edit();
-				editor.putInt("minScore" + level, score);
-				editor.commit();
-			}
-			else if (score > sharedPreference.getInt("maxScore" + level, 0))
-			{
-				//新的最高记录
-				SharedPreferences.Editor editor = sharedPreference.edit();
-				editor.putInt("maxScore" + level, score);
-				editor.commit();
-			}
+		public void gameEndReplayThisLevel(final int level, final int score, final Informer informer) {
+			((Vibrator) getSystemService(Service.VIBRATOR_SERVICE)).vibrate(500);
+
 			new AlertDialog.Builder(context).setMessage(R.string.gameOver)
 					//TODO 在线排名系统
 					.setNegativeButton(R.string.replayLater, new DialogInterface.OnClickListener() {
@@ -403,26 +389,32 @@ public class GameActivity extends Activity {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							informer.commit(true);
+
+							SharedPreferences sharedPreference
+									= getSharedPreferences("Records", MODE_PRIVATE);
+							if (score < sharedPreference.getInt("minScore" + level, 500))
+							{
+								//写入最低成绩
+								SharedPreferences.Editor editor = sharedPreference.edit();
+								editor.putInt("minScore" + level, score);
+								editor.commit();
+							}
+							else if (score > sharedPreference.getInt("maxScore" + level, 0))
+							{
+								//新的最高记录
+								SharedPreferences.Editor editor = sharedPreference.edit();
+								editor.putInt("maxScore" + level, score);
+								editor.commit();
+							}
+							//写入一次游戏记录
+							new Records(context).insert(level, score);
 						}
 					}).setCancelable(false).show();
-
-			//写入一次游戏记录
-			new SqlRecords(context).insert(level, score);
 		}
 
 		@Override
 		public void levelUpEnterNextLevel(final int level, final int score, final Informer informer) {
 			Sounds.getInstance().playSound("level_up");
-
-			SharedPreferences sharedPreference
-					= getSharedPreferences("Records", MODE_PRIVATE);
-			if (score > sharedPreference.getInt("maxScore" + level, 0))
-			{
-				//新的最高记录
-				SharedPreferences.Editor editor = sharedPreference.edit();
-				editor.putInt("maxScore" + level, score);
-				editor.commit();
-			}
 
 			new AlertDialog.Builder(context).setMessage(R.string.levelUp)
 					//TODO 在线排名系统
@@ -445,8 +437,17 @@ public class GameActivity extends Activity {
 						}
 					}).setCancelable(false).show();
 
+			SharedPreferences sharedPreference
+					= getSharedPreferences("Records", MODE_PRIVATE);
+			if (score > sharedPreference.getInt("maxScore" + level, 0))
+			{
+				//新的最高记录
+				SharedPreferences.Editor editor = sharedPreference.edit();
+				editor.putInt("maxScore" + level, score);
+				editor.commit();
+			}
 			//写入一次游戏记录
-			new SqlRecords(context).insert(level, score);
+			new Records(context).insert(level, score);
 		}
 	};
 }

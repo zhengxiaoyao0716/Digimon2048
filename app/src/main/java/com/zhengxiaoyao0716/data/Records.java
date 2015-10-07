@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * @author 薛函
  */
-public class SqlRecords extends SQLiteOpenHelper {
+public class Records extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String DICTIONARY_TABLE_NAME = "records ";
     private static final String DICTIONARY_TABLE_CREATE =
@@ -23,7 +23,7 @@ public class SqlRecords extends SQLiteOpenHelper {
                     .append(DICTIONARY_TABLE_NAME)
                     .append("(level INT, score INT, time char(19));")
                     .toString();
-    public SqlRecords(Context context) {
+    public Records(Context context) {
         super(context, "game.db", null, DATABASE_VERSION);
     }
 

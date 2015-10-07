@@ -8,7 +8,7 @@ import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
-import com.zhengxiaoyao0716.data.SqlRecords;
+import com.zhengxiaoyao0716.data.Records;
 
 import java.util.List;
 import java.util.Map;
@@ -65,7 +65,7 @@ public class RankActivity extends Activity
 	}
 
 	private void loadMyRecord() {
-		rankListData = new SqlRecords(this).list();
+		rankListData = new Records(this).list();
 		if (rankListData == null) {
 			Toast.makeText(this, R.string.nullRecords, Toast.LENGTH_LONG).show();
 			return;
