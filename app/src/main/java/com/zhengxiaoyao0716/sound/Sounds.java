@@ -1,4 +1,4 @@
-package com.zhengxiaoyao0716.sounds;
+package com.zhengxiaoyao0716.sound;
 
 import android.content.Context;
 import android.media.AudioAttributes;

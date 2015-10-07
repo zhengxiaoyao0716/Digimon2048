@@ -1,4 +1,4 @@
-package com.zhengxiaoyao0716.sounds;
+package com.zhengxiaoyao0716.sound;
 
 public class Music {
     private static final Music INSTANCE = new Music();

@@ -13,7 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
-import com.zhengxiaoyao0716.sounds.Sounds;
+import com.zhengxiaoyao0716.sound.Sounds;
 
 import java.util.Random;
 

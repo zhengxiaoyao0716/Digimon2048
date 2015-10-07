@@ -34,8 +34,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.zhengxiaoyao0716.sounds.Music;
-import com.zhengxiaoyao0716.sounds.Sounds;
+import com.zhengxiaoyao0716.sound.Music;
+import com.zhengxiaoyao0716.sound.Sounds;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
