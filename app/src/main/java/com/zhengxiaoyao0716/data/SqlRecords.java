@@ -16,12 +16,11 @@ import java.util.Map;
  * @author 薛函
  */
 public class SqlRecords extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 2;
-    private static final String DICTIONARY_TABLE_NAME = "records";
+    private static final int DATABASE_VERSION = 1;
+    private static final String DICTIONARY_TABLE_NAME = "records(";
     private static final String DICTIONARY_TABLE_CREATE =
             new StringBuilder("CREATE TABLE ")
                     .append(DICTIONARY_TABLE_NAME)
-                    .append(" (name").append(" TEXT, ")
                     .append("level").append(" INT, ")
                     .append("score").append(" INT, ")
                     .append("time").append(" char(19));")
@@ -39,16 +38,16 @@ public class SqlRecords extends SQLiteOpenHelper {
 
     public List<? extends Map<String, ?>> list(){
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(DICTIONARY_TABLE_NAME, new String[]{"name","level","score","time"},null,null,null,null,null);
+        Cursor cursor = db.query(DICTIONARY_TABLE_NAME, new String[]{"level","score","time"},null,null,null,null,null);
         List<Map<String, ?>> recordList = new ArrayList<>();
-
+        int number = 0;
         while(cursor.moveToNext()){
             Map<String, Object> map = new HashMap<>();
-            map.put("name", cursor.getString(cursor.getColumnIndex("name")));
-            map.put("level", cursor.getInt(cursor.getColumnIndex("level")));
-            map.put("number", cursor.getInt(cursor.getColumnIndex("score")));
+            map.put("number", String.format("No.%2d:", ++number));
+            map.put("name", String.format("Level:%2d", cursor.getInt(cursor.getColumnIndex("level"))));
+            map.put("score", cursor.getInt(cursor.getColumnIndex("score")));
             map.put("time",
-                    new SimpleDateFormat("yyyy-MM-dd HH-mm-ss").format(Long.valueOf(
+                    new SimpleDateFormat("MM/dd HH:mm").format(Long.valueOf(
                                     cursor.getString(cursor.getColumnIndex("time"))))
             );
             recordList.add(map);
@@ -57,7 +56,7 @@ public class SqlRecords extends SQLiteOpenHelper {
         return recordList;
     }
 
-    public void insert(String name,int level,int score){
+    public void insert(int level,int score){
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT count(*) FROM " + DICTIONARY_TABLE_NAME, null);
@@ -72,7 +71,6 @@ public class SqlRecords extends SQLiteOpenHelper {
         }
 
         ContentValues cv = new ContentValues();
-        cv.put("name", name);
         cv.put("level", level);
         cv.put("score", score);
         cv.put("time", String.valueOf(System.currentTimeMillis()));
