@@ -38,6 +38,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.zhengxiaoyao0716.sounds.Sounds;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -117,15 +118,6 @@ public class GameActivity extends Activity {
 		game2048.finishGame();
 	}
 
-	@Override
-	public boolean onKeyDown(int keyCode, @NonNull KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			Intent intent = new Intent(context, MainActivity.class);
-			startActivity(intent);
-			finish();
-		}
-		return super.onKeyDown(keyCode, event);
-	}
 	//界面侧边按钮的点击事件
 	private final OnClickListener onButtonClickListener = new OnClickListener()
 	{
@@ -136,8 +128,7 @@ public class GameActivity extends Activity {
 				case R.id.replayButton:
 				{
 					new AlertDialog.Builder(context)
-							.setNegativeButton(R.string.cancel, null)
-							.setNeutralButton(R.string.restart,
+							.setNegativeButton(R.string.restart,
 									new DialogInterface.OnClickListener() {
 										public void onClick(DialogInterface d, int i) {
 											digimons = new int[1];
@@ -147,7 +138,8 @@ public class GameActivity extends Activity {
 													game2048.replay(false);
 												}
 											}.chooseDigimon(digimons, 0);
-										}})
+										}
+									})
 							.setPositiveButton(R.string.replay,
 									new DialogInterface.OnClickListener() {
 										public void onClick(DialogInterface d, int i) {
@@ -163,8 +155,7 @@ public class GameActivity extends Activity {
 				case R.id.soundButton:
 				{
 					new AlertDialog.Builder(context)
-							.setNegativeButton(R.string.cancel, null)
-							.setNeutralButton(R.string.closeSound,
+							.setNegativeButton(R.string.closeSound,
 									new DialogInterface.OnClickListener() {
 										public void onClick(DialogInterface d, int i) {
 
@@ -180,15 +171,7 @@ public class GameActivity extends Activity {
 				{
 					new AlertDialog.Builder(context)
 							.setNegativeButton(R.string.cancel, null)
-							.setNeutralButton(R.string.quitGame,
-									new DialogInterface.OnClickListener() {
-										public void onClick(DialogInterface d, int i) {
-											Intent intent = new Intent(context, MainActivity.class);
-											startActivity(intent);
-											finish();
-										}
-									})
-							.setPositiveButton(R.string.exitApp,
+							.setPositiveButton(R.string.quitGame,
 									new DialogInterface.OnClickListener() {
 										public void onClick(DialogInterface d, int i) {
 											finish();
@@ -371,14 +354,12 @@ public class GameActivity extends Activity {
 
 		@Override
 		public void movedRespond() {
-			// TODO Auto-generated method stub
-			
+			Sounds.getInstance().playSound("move");
 		}
 
 		@Override
 		public void mergedRespond() {
-			// TODO Auto-generated method stub
-			
+			Sounds.getInstance().playSound("merge");
 		}
 
 		@Override
@@ -431,12 +412,14 @@ public class GameActivity extends Activity {
 					}).setCancelable(false).show();
 
 			//写入一次游戏记录
-			//Records.add(context, "Default", level, score);
-			new SqlRecords(context).insert("Default", level, score);
+			//Records.add(context, level, score);
+			new SqlRecords(context).insert(level, score);
 		}
 
 		@Override
 		public void levelUpEnterNextLevel(final int level, final int score, final Informer informer) {
+			Sounds.getInstance().playSound("level_up");
+
 			SharedPreferences sharedPreference
 					= getSharedPreferences("Records", MODE_PRIVATE);
 			if (score > sharedPreference.getInt("maxScore" + level, 0))
@@ -469,8 +452,8 @@ public class GameActivity extends Activity {
 					}).setCancelable(false).show();
 
 			//写入一次游戏记录
-			//Records.add(context, "Default", level, score);
-			new SqlRecords(context).insert("Default", level, score);
+			//Records.add(context, level, score);
+			new SqlRecords(context).insert(level, score);
 		}
 	};
 }

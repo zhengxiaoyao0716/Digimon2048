@@ -11,6 +11,8 @@ import android.widget.Toast;
 import com.zhengxiaoyao0716.data.Records;
 import com.zhengxiaoyao0716.data.SqlRecords;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +44,7 @@ public class RankActivity extends Activity
 	{
 		switch (item.getItemId())
 		{
-			case R.id.home:
+			case android.R.id.home:
 				finish();
 				break;
 
@@ -68,9 +70,11 @@ public class RankActivity extends Activity
 	private void loadMyRecord() {
 		//rankListData = Records.getRecordList(this);
 		rankListData = new SqlRecords(this).list();
-		if (rankListData == null)
+		if (rankListData == null) {
 			Toast.makeText(this, R.string.nullRecords, Toast.LENGTH_LONG).show();
-		else refreshList();
+			return;
+		}
+		refreshList();
 	}
 	private void refreshList()
 	{

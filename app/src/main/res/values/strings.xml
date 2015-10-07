@@ -39,19 +39,16 @@
 	<string name="level">关卡：</string>
 	<string name="score">分数：</string>
 
-	<string name="cancel">我点错了</string>
 	<string name="restart">重新开始</string>
 	<string name="replay">重玩本关</string>
 
-	<!--<string name="cancel">我点错了</string>-->
 	<string name="closeSound">关闭音效</string>
 	<string name="playSound">打卡音效</string>
 	<string name="closeMusic">关闭音乐</string>
 	<string name="playMusic">播放音乐</string>
 
-	<!--<string name="cancel">我点错了</string>-->
+	<string name="cancel">我点错了</string>
 	<string name="quitGame">回到标题</string>
-	<string name="exitApp">退出应用</string>
 
 	<string name="levelUp">恭喜晋级！</string>
 	<!--<string name="replay">重玩本关</string>-->

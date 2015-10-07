@@ -44,14 +44,13 @@ public class Records {
         if (records == null) return null;
 
         List<Map<String, ?>> recordList = new ArrayList<>();
-        for (int index = 0; index < records.length(); index++)
+        for (int index = 0; index < records.length(); )
         {
             Map<String, Object> record = new HashMap<>();
             JSONObject recordJA = records.optJSONObject(index);
-            record.put("number", String.format("No.%2d:", index + 1));
-            record.put("level", recordJA.optInt("level", 0));
-            record.put("score", recordJA.optInt("score", -1) + "分");
-            record.put("name", recordJA.optString("name", "Default"));
+            record.put("number", String.format("No.%2d:", ++index));
+            record.put("score", recordJA.optInt("score", -1));
+            record.put("name", String.format("Level:%2d", recordJA.optInt("level", 0)));
             record.put("time", new SimpleDateFormat("MM/dd HH:mm")
                     .format(recordJA.optLong("time", 0)));
             recordList.add(record);
@@ -61,8 +60,7 @@ public class Records {
 
     //添加记录
     private static Thread addRecordThread = new Thread();
-    public static void add(final Context context,
-                           final String name, final int level, final int score)
+    public static void add(final Context context, final int level, final int score)
     {
         if (addRecordThread.isAlive()) return;
         else addRecordThread = new Thread(){
@@ -99,8 +97,8 @@ public class Records {
 
                 try {
                     //记录本次
-                    records.put(new JSONObject().put("name", name)
-                            .put("level", level).put("score", score)
+                    records.put(
+                            new JSONObject().put("level", level).put("score", score)
                             .put("time", System.currentTimeMillis()));
 
                     //write file

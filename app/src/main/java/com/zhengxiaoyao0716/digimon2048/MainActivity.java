@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
+import com.zhengxiaoyao0716.sounds.Sounds;
 
 import java.util.Random;
 
@@ -22,6 +23,10 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		Sounds.getInstance().loadSound(this, "move", R.raw.move);
+		Sounds.getInstance().loadSound(this, "merge", R.raw.merge);
+		Sounds.getInstance().loadSound(this, "level_up", R.raw.level_up);
 	}
 	
 	@Override
@@ -62,7 +67,6 @@ public class MainActivity extends Activity {
 	{
 		Intent intent = new Intent(this, GameActivity.class);
 		startActivity(intent);
-		finish();
 	}
 	
 	public void onRankClick(View view)
