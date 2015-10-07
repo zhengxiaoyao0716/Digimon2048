@@ -377,7 +377,7 @@ public class GameActivity extends Activity {
 		public void gameEndReplayThisLevel(int level, int score, final Informer informer) {
 			SharedPreferences sharedPreference
 					= getSharedPreferences("Records", MODE_PRIVATE);
-			if (score < sharedPreference.getInt("minScore" + level, 0))
+			if (score < sharedPreference.getInt("minScore" + level, 500))
 			{
 				//写入最低成绩
 				SharedPreferences.Editor editor = sharedPreference.edit();
