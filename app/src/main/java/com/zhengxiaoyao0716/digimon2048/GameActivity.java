@@ -431,8 +431,8 @@ public class GameActivity extends Activity {
 					}).setCancelable(false).show();
 
 			//写入一次游戏记录
-			Records.add(context, "Default", level, score);
-			//new SqlRecords(context).insert("Default", level, score);
+			//Records.add(context, "Default", level, score);
+			new SqlRecords(context).insert("Default", level, score);
 		}
 
 		@Override
@@ -469,8 +469,8 @@ public class GameActivity extends Activity {
 					}).setCancelable(false).show();
 
 			//写入一次游戏记录
-			Records.add(context, "Default", level, score);
-			//new SqlRecords(context).insert("Default", level, score);
+			//Records.add(context, "Default", level, score);
+			new SqlRecords(context).insert("Default", level, score);
 		}
 	};
 }

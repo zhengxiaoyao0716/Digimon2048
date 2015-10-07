@@ -46,7 +46,7 @@ public class SqlRecords extends SQLiteOpenHelper {
             Map<String, Object> map = new HashMap<>();
             map.put("name", cursor.getString(cursor.getColumnIndex("name")));
             map.put("level", cursor.getInt(cursor.getColumnIndex("level")));
-            map.put("score", cursor.getInt(cursor.getColumnIndex("score")));
+            map.put("number", cursor.getInt(cursor.getColumnIndex("score")));
             map.put("time",
                     new SimpleDateFormat("yyyy-MM-dd HH-mm-ss").format(Long.valueOf(
                                     cursor.getString(cursor.getColumnIndex("time"))))
@@ -63,11 +63,12 @@ public class SqlRecords extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery("SELECT count(*) FROM " + DICTIONARY_TABLE_NAME, null);
         cursor.moveToFirst();
         int count = cursor.getInt(0);
+        cursor.close();
         if (count >= 20) {
-            db.rawQuery(new StringBuilder("DELETE FROM ")
+            db.execSQL(new StringBuilder("DELETE FROM ")
                     .append(DICTIONARY_TABLE_NAME)
                     .append(" where time in ( select time from records limit 1)")
-                    .toString(),null);
+                    .toString());
         }
 
         ContentValues cv = new ContentValues();
