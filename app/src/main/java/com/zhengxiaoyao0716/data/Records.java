@@ -16,20 +16,17 @@ import java.util.Map;
  * @author 薛函
  */
 public class Records extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 1;
-    private static final String DICTIONARY_TABLE_NAME = "records ";
-    private static final String DICTIONARY_TABLE_CREATE =
-            new StringBuilder("CREATE TABLE ")
-                    .append(DICTIONARY_TABLE_NAME)
-                    .append("(level INT, score INT, time char(19));")
-                    .toString();
+    private static final String DICTIONARY_TABLE_NAME = "records";
+
     public Records(Context context) {
-        super(context, "game.db", null, DATABASE_VERSION);
+        super(context, "Records.db", null, 1);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(DICTIONARY_TABLE_CREATE);
+        db.execSQL(String.format(
+                "CREATE TABLE %s (level INT, score INT, time char(19));",
+                DICTIONARY_TABLE_NAME));
     }
 
     public List<? extends Map<String, ?>> list(){
@@ -61,10 +58,9 @@ public class Records extends SQLiteOpenHelper {
         int count = cursor.getInt(0);
         cursor.close();
         if (count >= 20) {
-            db.execSQL(new StringBuilder("DELETE FROM ")
-                    .append(DICTIONARY_TABLE_NAME)
-                    .append(" where time in ( select time from records limit 1)")
-                    .toString());
+            db.execSQL(String.format(
+                    "DELETE FROM %s where time in ( select time from records limit 1)",
+                    DICTIONARY_TABLE_NAME));
         }
 
         ContentValues cv = new ContentValues();

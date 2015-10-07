@@ -34,6 +34,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.zhengxiaoyao0716.sounds.Music;
 import com.zhengxiaoyao0716.sounds.Sounds;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -105,6 +106,11 @@ public class GameActivity extends Activity {
 	{
 		super.onResume();
 		game2048.startGame();
+
+		SharedPreferences preferences
+				= getSharedPreferences("Settings", MODE_PRIVATE);
+		Sounds.getInstance().soundsSwitch = preferences.getBoolean("soundSwitch", true);
+		Music.getInstance().musicSwitch = preferences.getBoolean("musicSwitch", true);
 	}
 	
 	@Override
@@ -112,6 +118,12 @@ public class GameActivity extends Activity {
 	{
 		super.onPause();
 		game2048.finishGame();
+
+		SharedPreferences.Editor editor
+				= getSharedPreferences("Settings", MODE_PRIVATE).edit();
+		editor.putBoolean("soundSwitch", Sounds.getInstance().soundsSwitch);
+		editor.putBoolean("musicSwitch", Music.getInstance().musicSwitch);
+		editor.commit();
 	}
 
 	//界面侧边按钮的点击事件
@@ -151,15 +163,20 @@ public class GameActivity extends Activity {
 				case R.id.soundButton:
 				{
 					new AlertDialog.Builder(context)
-							.setNegativeButton(R.string.closeSound,
+							.setNegativeButton(Sounds.getInstance().soundsSwitch ?
+											R.string.closeSounds : R.string.playSounds,
 									new DialogInterface.OnClickListener() {
 										public void onClick(DialogInterface d, int i) {
-
+											Sounds.getInstance().soundsSwitch
+													= !Sounds.getInstance().soundsSwitch;
 										}
 									})
-							.setPositiveButton(R.string.closeMusic,
+							.setPositiveButton(Music.getInstance().musicSwitch ?
+											R.string.closeMusic : R.string.playMusic,
 									new DialogInterface.OnClickListener() {
 										public void onClick(DialogInterface d, int i) {
+											Music.getInstance().musicSwitch
+													= !Music.getInstance().musicSwitch;
 										}
 									}).show();
 				}break;
@@ -230,7 +247,7 @@ public class GameActivity extends Activity {
 			HashMap<String, Object> dataMap = new HashMap<>();
 			try {
 				//read file
-				FileInputStream inputStream = openFileInput("gameData");
+				FileInputStream inputStream = openFileInput("Saves.sav");
 				byte[] bytes = new byte[1024];
 				ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
 				while (inputStream.read(bytes) != -1) {
@@ -292,7 +309,7 @@ public class GameActivity extends Activity {
 				dataJO.put("digimons", digimonJA);
 
 				//write file
-				FileOutputStream outputStream = openFileOutput("gameData",
+				FileOutputStream outputStream = openFileOutput("Saves.sav",
 						Activity.MODE_PRIVATE);
 				outputStream.write(
 						//虽然是开源的，还是加密一下吧，至少拦住小白
@@ -390,22 +407,6 @@ public class GameActivity extends Activity {
 						public void onClick(DialogInterface dialog, int which) {
 							informer.commit(true);
 
-							SharedPreferences sharedPreference
-									= getSharedPreferences("Records", MODE_PRIVATE);
-							if (score < sharedPreference.getInt("minScore" + level, 500))
-							{
-								//写入最低成绩
-								SharedPreferences.Editor editor = sharedPreference.edit();
-								editor.putInt("minScore" + level, score);
-								editor.commit();
-							}
-							else if (score > sharedPreference.getInt("maxScore" + level, 0))
-							{
-								//新的最高记录
-								SharedPreferences.Editor editor = sharedPreference.edit();
-								editor.putInt("maxScore" + level, score);
-								editor.commit();
-							}
 							//写入一次游戏记录
 							new Records(context).insert(level, score);
 						}
@@ -413,7 +414,7 @@ public class GameActivity extends Activity {
 		}
 
 		@Override
-		public void levelUpEnterNextLevel(final int level, final int score, final Informer informer) {
+		public void levelUpEnterNextLevel(final int level, int score, final Informer informer) {
 			Sounds.getInstance().playSound("level_up");
 
 			new AlertDialog.Builder(context).setMessage(R.string.levelUp)
@@ -437,15 +438,6 @@ public class GameActivity extends Activity {
 						}
 					}).setCancelable(false).show();
 
-			SharedPreferences sharedPreference
-					= getSharedPreferences("Records", MODE_PRIVATE);
-			if (score > sharedPreference.getInt("maxScore" + level, 0))
-			{
-				//新的最高记录
-				SharedPreferences.Editor editor = sharedPreference.edit();
-				editor.putInt("maxScore" + level, score);
-				editor.commit();
-			}
 			//写入一次游戏记录
 			new Records(context).insert(level, score);
 		}

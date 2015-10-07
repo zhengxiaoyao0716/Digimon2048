@@ -63,6 +63,7 @@ public class MainActivity extends Activity {
 		}
 		return true;
 	}
+
 	public void onStartClick(View view)
 	{
 		Intent intent = new Intent(this, GameActivity.class);
