@@ -17,19 +17,15 @@ import java.util.Map;
  */
 public class SqlRecords extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
-    private static final String DICTIONARY_TABLE_NAME = "records(";
+    private static final String DICTIONARY_TABLE_NAME = "records ";
     private static final String DICTIONARY_TABLE_CREATE =
             new StringBuilder("CREATE TABLE ")
                     .append(DICTIONARY_TABLE_NAME)
-                    .append("level").append(" INT, ")
-                    .append("score").append(" INT, ")
-                    .append("time").append(" char(19));")
+                    .append("(level INT, score INT, time char(19));")
                     .toString();
-
     public SqlRecords(Context context) {
         super(context, "game.db", null, DATABASE_VERSION);
     }
-
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -38,7 +34,8 @@ public class SqlRecords extends SQLiteOpenHelper {
 
     public List<? extends Map<String, ?>> list(){
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(DICTIONARY_TABLE_NAME, new String[]{"level","score","time"},null,null,null,null,null);
+        Cursor cursor = db.query(DICTIONARY_TABLE_NAME, new String[]{"level","score","time"},
+                null,null,null,null,null);
         List<Map<String, ?>> recordList = new ArrayList<>();
         int number = 0;
         while(cursor.moveToNext()){
