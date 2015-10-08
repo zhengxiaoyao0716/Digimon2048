@@ -5,15 +5,17 @@ import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Build;
+import com.zhengxiaoyao0716.digimon2048.R;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Sounds {
+public enum Sounds {
+    INSTANCE;
+
     private SoundPool soundPool;
     private Map<String, Integer> soundIds;
-
-    private Sounds()
+    public void initSounds(Context context)
     {
         if (Build.VERSION.SDK_INT >= 21)
         {
@@ -29,17 +31,16 @@ public class Sounds {
         else //noinspection deprecation
             soundPool = new SoundPool(3, AudioManager.STREAM_MUSIC, 0);
         soundIds = new HashMap<>();
+        soundIds.put("move", soundPool.load(context, R.raw.move, 1));
+        soundIds.put("merge", soundPool.load(context, R.raw.merge, 1));
+        soundIds.put("level_up", soundPool.load(context, R.raw.level_up, 1));
     }
-    private static final Sounds INSTANCE = new Sounds();
-    public static Sounds getInstance() { return INSTANCE; }
-
-    public void loadSound(Context context, final String name, int resourceId)
-    { soundIds.put(name, soundPool.load(context, resourceId, 1)); }
-
     public boolean soundsSwitch;
     public void playSound(String name)
     {
         if (soundsSwitch && soundIds.containsKey(name))
             soundPool.play(soundIds.get(name), 1, 1, 0, 0, 1);
     }
+
+    public  void releaseSounds() { soundPool.release(); }
 }

@@ -109,8 +109,10 @@ public class GameActivity extends Activity {
 
 		SharedPreferences preferences
 				= getSharedPreferences("Settings", MODE_PRIVATE);
-		Sounds.getInstance().soundsSwitch = preferences.getBoolean("soundSwitch", true);
-		Music.getInstance().musicSwitch = preferences.getBoolean("musicSwitch", true);
+		Sounds.INSTANCE.soundsSwitch = preferences.getBoolean("soundSwitch", true);
+		Music.INSTANCE.musicSwitch = preferences.getBoolean("musicSwitch", true);
+
+		Music.INSTANCE.playMusic(context);
 	}
 	
 	@Override
@@ -121,9 +123,11 @@ public class GameActivity extends Activity {
 
 		SharedPreferences.Editor editor
 				= getSharedPreferences("Settings", MODE_PRIVATE).edit();
-		editor.putBoolean("soundSwitch", Sounds.getInstance().soundsSwitch);
-		editor.putBoolean("musicSwitch", Music.getInstance().musicSwitch);
+		editor.putBoolean("soundSwitch", Sounds.INSTANCE.soundsSwitch);
+		editor.putBoolean("musicSwitch", Music.INSTANCE.musicSwitch);
 		editor.commit();
+
+		Music.INSTANCE.stopMusic();
 	}
 
 	//界面侧边按钮的点击事件
@@ -163,20 +167,28 @@ public class GameActivity extends Activity {
 				case R.id.soundButton:
 				{
 					new AlertDialog.Builder(context)
-							.setNegativeButton(Sounds.getInstance().soundsSwitch ?
+							.setNegativeButton(Sounds.INSTANCE.soundsSwitch ?
 											R.string.closeSounds : R.string.playSounds,
 									new DialogInterface.OnClickListener() {
 										public void onClick(DialogInterface d, int i) {
-											Sounds.getInstance().soundsSwitch
-													= !Sounds.getInstance().soundsSwitch;
+											Sounds.INSTANCE.soundsSwitch
+													= !Sounds.INSTANCE.soundsSwitch;
 										}
 									})
-							.setPositiveButton(Music.getInstance().musicSwitch ?
+							.setPositiveButton(Music.INSTANCE.musicSwitch ?
 											R.string.closeMusic : R.string.playMusic,
 									new DialogInterface.OnClickListener() {
 										public void onClick(DialogInterface d, int i) {
-											Music.getInstance().musicSwitch
-													= !Music.getInstance().musicSwitch;
+											if (Music.INSTANCE.musicSwitch)
+											{
+												Music.INSTANCE.musicSwitch = false;
+												Music.INSTANCE.stopMusic();
+											}
+											else
+											{
+												Music.INSTANCE.musicSwitch = true;
+												Music.INSTANCE.playMusic(context);
+											}
 										}
 									}).show();
 				}break;
@@ -366,12 +378,12 @@ public class GameActivity extends Activity {
 
 		@Override
 		public void movedRespond() {
-			Sounds.getInstance().playSound("move");
+			Sounds.INSTANCE.playSound("move");
 		}
 
 		@Override
 		public void mergedRespond() {
-			Sounds.getInstance().playSound("merge");
+			Sounds.INSTANCE.playSound("merge");
 		}
 
 		@Override
@@ -415,7 +427,7 @@ public class GameActivity extends Activity {
 
 		@Override
 		public void levelUpEnterNextLevel(final int level, int score, final Informer informer) {
-			Sounds.getInstance().playSound("level_up");
+			Sounds.INSTANCE.playSound("level_up");
 
 			new AlertDialog.Builder(context).setMessage(R.string.levelUp)
 					//TODO 在线排名系统

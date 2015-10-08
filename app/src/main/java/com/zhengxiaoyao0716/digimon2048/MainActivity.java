@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
+import com.zhengxiaoyao0716.sound.Music;
 import com.zhengxiaoyao0716.sound.Sounds;
 
 import java.util.Random;
@@ -24,11 +25,14 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		Sounds.getInstance().loadSound(this, "move", R.raw.move);
-		Sounds.getInstance().loadSound(this, "merge", R.raw.merge);
-		Sounds.getInstance().loadSound(this, "level_up", R.raw.level_up);
+		Sounds.INSTANCE.initSounds(this);
 	}
-	
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		Sounds.INSTANCE.releaseSounds();
+	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
