@@ -29,7 +29,7 @@ public class Records extends SQLiteOpenHelper {
                 DICTIONARY_TABLE_NAME));
     }
 
-    public List<? extends Map<String, ?>> list(){
+    public List<? extends Map<String, ?>> getRecordsList(){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(DICTIONARY_TABLE_NAME, new String[]{"level","score","time"},
                 null,null,null,null,null);
@@ -38,8 +38,8 @@ public class Records extends SQLiteOpenHelper {
         while(cursor.moveToNext()){
             Map<String, Object> map = new HashMap<>();
             map.put("number", String.format("No.%2d:", ++number));
-            map.put("name", String.format("Level:%2d", cursor.getInt(cursor.getColumnIndex("level"))));
             map.put("score", cursor.getInt(cursor.getColumnIndex("score")));
+            map.put("name", String.format("Level:%2d", cursor.getInt(cursor.getColumnIndex("level"))));
             map.put("time",
                     new SimpleDateFormat("MM/dd HH:mm").format(Long.valueOf(
                                     cursor.getString(cursor.getColumnIndex("time"))))

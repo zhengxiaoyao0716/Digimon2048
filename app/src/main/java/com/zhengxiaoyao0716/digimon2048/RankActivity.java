@@ -2,13 +2,17 @@ package com.zhengxiaoyao0716.digimon2048;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 import com.zhengxiaoyao0716.data.Records;
+import com.zhengxiaoyao0716.net.GetRankList;
 
 import java.util.List;
 import java.util.Map;
@@ -27,7 +31,7 @@ public class RankActivity extends Activity
 		if (actionBar!=null)
 			actionBar.setDisplayHomeAsUpEnabled(true);
 
-		loadMyRecord();
+		loadMyRecords();
     }
 
 	@Override
@@ -46,31 +50,52 @@ public class RankActivity extends Activity
 				break;
 
 			case R.id.myRecord:
-				loadMyRecord();
+				loadMyRecords();
 				break;
 
 			case R.id.dayRank:
-			{
-			}break;
+				loadNetRankList(1, 50, true);
+				break;
 
 			case R.id.weekRank:
-			{
-			}break;
+				loadNetRankList(7, 100, true);
+				break;
 
 			case R.id.lowestRank:
-			{
-			}break;
+				loadNetRankList(7, 50, false);
+				break;
 		}
 		return true;
 	}
 
-	private void loadMyRecord() {
-		rankListData = new Records(this).list();
+	private void loadMyRecords() {
+		rankListData = new Records(this).getRecordsList();
 		if (rankListData == null) {
 			Toast.makeText(this, R.string.nullRecords, Toast.LENGTH_LONG).show();
 			return;
 		}
 		refreshList();
+	}
+	private void loadNetRankList(int days, int number, boolean isDESC) {
+		final ProgressDialog progressDialog = new ProgressDialog(this);
+		progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		progressDialog.setMessage("请稍候...");
+		progressDialog.setIndeterminate(true);
+		progressDialog.setCancelable(false);
+		progressDialog.show();
+
+		new Thread(new GetRankList(new Handler(){
+			@Override
+			public void handleMessage(Message msg)
+			{
+				super.handleMessage(msg);
+				if (msg.obj != null) {
+					rankListData = (List<? extends Map<String, ?>>) msg.obj;
+					refreshList();
+				}
+				progressDialog.dismiss();
+			}
+		}, days, number, isDESC)).start();
 	}
 	private void refreshList()
 	{
