@@ -50,7 +50,7 @@ public class Records extends SQLiteOpenHelper {
         return recordList;
     }
 
-    public void insert(int level,int score){
+    public void insert(int level,int score, long time){
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT count(*) FROM " + DICTIONARY_TABLE_NAME, null);
@@ -66,7 +66,7 @@ public class Records extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put("level", level);
         cv.put("score", score);
-        cv.put("time", String.valueOf(System.currentTimeMillis()));
+        cv.put("time", String.valueOf(time));
         db.insert(DICTIONARY_TABLE_NAME, null, cv);
         //关闭数据库
         db.close();

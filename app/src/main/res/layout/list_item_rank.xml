@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:gravity="center_vertical" >
@@ -11,7 +12,7 @@
             android:layout_marginEnd="15dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textSize="28sp"
-            android:text="No.08:"
+            tools:text="No.08:"
             android:id="@+id/rankListItemNumber" />
 
     <TextView
@@ -21,7 +22,7 @@
             android:layout_marginEnd="15dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textSize="28sp"
-            android:text="88888分"
+            tools:text="88888分"
             android:id="@+id/rankListItemScore" />
 
     <LinearLayout
@@ -35,7 +36,7 @@
                 android:layout_gravity="right|end"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:singleLine="true"
-                android:text="namename"
+                tools:text="namename"
                 android:id="@+id/rankListItemName" />
 
         <TextView
@@ -43,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="right|end"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="MM/dd HH:mm"
+                tools:text="MM/dd HH:mm"
                 android:id="@+id/rankListItemTime"/>
 
     </LinearLayout>

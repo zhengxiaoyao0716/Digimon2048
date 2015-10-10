@@ -1,4 +1,4 @@
-package com.zhengxiaoyao0716.dialog;
+package com.zhengxiaoyao0716.view;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -53,7 +53,7 @@ public abstract class ChooseDigimonDialog {
         digimonViews.add(tempDigimonIV);
 
         //加载布局
-        View chooseDialogView = LayoutInflater.from(context).inflate(R.layout.dialog_choose_digimon, null);
+        View chooseDialogView = LayoutInflater.from(context).inflate(R.layout.dialog_view_choose_digimon, null);
         final AlertDialog chooseAD = new AlertDialog.Builder(context)
                 .setTitle(R.string.pleaseChoose).setView(chooseDialogView)
                 .setCancelable(false).create();

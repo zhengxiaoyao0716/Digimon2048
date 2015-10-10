@@ -12,7 +12,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.util.Base64;
 import com.zhengxiaoyao0716.data.Records;
-import com.zhengxiaoyao0716.dialog.ChooseDigimonDialog;
+import com.zhengxiaoyao0716.view.ChooseDigimonDialog;
 import com.zhengxiaoyao0716.game2048.*;
 
 import android.app.Activity;
@@ -36,6 +36,7 @@ import android.widget.TextView;
 
 import com.zhengxiaoyao0716.sound.Music;
 import com.zhengxiaoyao0716.sound.Sounds;
+import com.zhengxiaoyao0716.view.ShowGradeDialogView;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -231,7 +232,7 @@ public class GameActivity extends Activity {
 					else width = (int) (boardW * clickW / viewW);
 					ImageView grid = (ImageView) boardGrid.getChildAt(boardW * height + width);
 					int num = (int) grid.getTag();
-					if (num != 0 && num <= aimNum)
+					if (num > 0 && num <= aimNum)
 					{
 						//显示普通模式数字
 						String imageName = "grid0_" + num;
@@ -407,7 +408,7 @@ public class GameActivity extends Activity {
 			((Vibrator) getSystemService(Service.VIBRATOR_SERVICE)).vibrate(500);
 
 			new AlertDialog.Builder(context).setMessage(R.string.gameOver)
-					//TODO 在线排名系统
+					.setView(ShowGradeDialogView.getGradeDialogView(context, level, score))
 					.setNegativeButton(R.string.replayLater, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
@@ -418,9 +419,6 @@ public class GameActivity extends Activity {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							informer.commit(true);
-
-							//写入一次游戏记录
-							new Records(context).insert(level, score);
 						}
 					}).setCancelable(false).show();
 		}
@@ -430,7 +428,7 @@ public class GameActivity extends Activity {
 			Sounds.INSTANCE.playSound("level_up");
 
 			new AlertDialog.Builder(context).setMessage(R.string.levelUp)
-					//TODO 在线排名系统
+					.setView(ShowGradeDialogView.getGradeDialogView(context, level, score))
 					.setNegativeButton(R.string.replay, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
@@ -449,9 +447,6 @@ public class GameActivity extends Activity {
 							}.chooseDigimon(digimons, level);
 						}
 					}).setCancelable(false).show();
-
-			//写入一次游戏记录
-			new Records(context).insert(level, score);
 		}
 	};
 }
