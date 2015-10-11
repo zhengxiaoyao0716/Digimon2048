@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import com.zhengxiaoyao0716.digimon2048.R;
-import com.zhengxiaoyao0716.net.GetPosition;
+import com.zhengxiaoyao0716.net.FindPosition;
 
 public class ShowGradeDialogView {
     public static View getGradeDialogView(final Context context, int level, int score)
@@ -19,12 +19,12 @@ public class ShowGradeDialogView {
         yourRankView.setText(
                 context.getString(R.string.yourRank) + "waiting...");
         //获取在线排名位置
-        new Thread(new GetPosition(new Handler(){
+        new Thread(new FindPosition(new Handler(){
             @Override
             public void handleMessage(Message msg)
             {
                 super.handleMessage(msg);
-                yourRankView.setText(context.getString(R.string.yourRank + msg.arg1));
+                yourRankView.setText(context.getString(R.string.yourRank) + msg.arg1);
             }
         }, level, score)).start();
         ((TextView) gradeDialogView.findViewById(R.id.yourLevel)).setText(

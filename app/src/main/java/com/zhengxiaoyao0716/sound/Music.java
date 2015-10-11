@@ -26,8 +26,9 @@ public enum Music {
     }
     public synchronized void stopMusic()
     {
-            mediaPlayer.stop();
-            mediaPlayer.release();
-            mediaPlayer = null;
+        if (mediaPlayer == null) return;
+        mediaPlayer.stop();
+        mediaPlayer.release();
+        mediaPlayer = null;
     }
 }

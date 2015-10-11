@@ -10,6 +10,7 @@ import java.util.Random;
 
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.os.*;
 import android.util.Base64;
 import com.zhengxiaoyao0716.data.Records;
 import com.zhengxiaoyao0716.dialog.ChooseDigimonDialog;
@@ -23,9 +24,6 @@ import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Vibrator;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -34,6 +32,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.zhengxiaoyao0716.net.PushGrade;
 import com.zhengxiaoyao0716.sound.Music;
 import com.zhengxiaoyao0716.sound.Sounds;
 import com.zhengxiaoyao0716.dialog.ShowGradeDialogView;
@@ -243,8 +242,13 @@ public class GameActivity extends Activity {
 				}
 				else
 				{
-					game2048.action(((touchY + touchX > 0) ? 0 : 2)
-							+ ((touchY - touchX > 0) ? 0 : 1));
+					try {
+						game2048.action(((touchY + touchX > 0) ? 0 : 2)
+								+ ((touchY - touchX > 0) ? 0 : 1));
+					} catch (IllegalStateException e) {
+						//游戏结束时滑动过快可能会导致这个
+						e.printStackTrace();
+					}
 				}
 			}
 			return true;
@@ -450,10 +454,13 @@ public class GameActivity extends Activity {
 		}
 		private void writeRecord(int level, int score)
 		{
-			//写入本地游戏记录
+			//写入本地记录
 			long time = System.currentTimeMillis();
 			new Records(context).insert(level, score, time);
-			//TODO 在线提交记录
+			//在线提交记录
+			new Thread(new PushGrade(level, score,
+					getSharedPreferences("Settings", MODE_PRIVATE)
+							.getString("playerName", "Unknown"), time)).start();
 		}
 	};
 }
