@@ -5,9 +5,15 @@
 	MainActivity
 	-->
     <string name="app_name">数码宝贝2048</string>
-	<string name="share">分享</string>
+
+	<string name="edit">编辑</string>
+	<string name="editDialogTitle">先取一个好听点儿的名字吧~</string>
+	<string name="cancelEdit">放弃修改</string>
+	<string name="saveEdit">保存修改</string>
+	<string name="editFailed">修改昵称失败，字数不得少于3！</string>
+
 	<string name="about">关于</string>
-	<string name="exit">退出</string>
+	<string name="aboutDialogTitle">亲，给我点动力呗~~~</string>
 	<string name="copyright">
 		版本：1.0\n
 		作者：正逍遥0716\n
@@ -15,8 +21,10 @@
 		Copyright©2015 正逍遥0716.\n
 		Some Rights Reserved.
 	</string>
-    <string name="attentionMe">关注我</string>
-    <string name="iKnow">知道了</string>
+	<string name="connectMe">联系我</string>
+	<string name="attentionMe">关注我</string>
+
+	<string name="exit">退出</string>
 
 	<string name="helpString0">
 		每次滑动都会随机获得一只幼年体数码宝贝或一枚数码蛋。
@@ -47,10 +55,10 @@
 	<string name="closeMusic">关闭音乐</string>
 	<string name="playMusic">播放音乐</string>
 
-	<string name="cancel">返回游戏</string>
+	<string name="backGame">返回游戏</string>
 	<string name="quitGame">回到标题</string>
 
-	<string name="yourLevel">等级：%2d级</string>
+	<string name="yourLevel">等级：%02d级</string>
 	<string name="yourScore">得分：%5d分</string>
 	<string name="yourRank">在线排名：</string>
 
@@ -70,6 +78,6 @@
 	<string name="weekRank">本周排行</string>
 	<string name="lowestRank">囧排行</string>
 
-	<string name="nullRecords">抱歉，排行数据获取失败</string>
+	<string name="getRankFailed">抱歉，排行数据获取失败</string>
 
 </resources>

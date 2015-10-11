@@ -5,23 +5,21 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import org.json.JSONArray;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author 薛函
  */
 public class Records extends SQLiteOpenHelper {
-    private static final String DICTIONARY_TABLE_NAME = "records";
-
+    private Context context;
     public Records(Context context) {
         super(context, "Records.db", null, 1);
+        this.context = context;
     }
 
+    private static final String DICTIONARY_TABLE_NAME = "records";
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(String.format(
@@ -29,25 +27,26 @@ public class Records extends SQLiteOpenHelper {
                 DICTIONARY_TABLE_NAME));
     }
 
-    public List<? extends Map<String, ?>> getRecordsList(){
+    public JSONArray getRecordsList(){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(DICTIONARY_TABLE_NAME, new String[]{"level","score","time"},
                 null,null,null,null,null);
-        List<Map<String, ?>> recordList = new ArrayList<>();
+        JSONArray recordListJA = new JSONArray();
         int number = 0;
         while(cursor.moveToNext()){
-            Map<String, Object> map = new HashMap<>();
-            map.put("number", String.format("No.%2d:", ++number));
-            map.put("score", cursor.getInt(cursor.getColumnIndex("score")));
-            map.put("name", String.format("Level:%2d", cursor.getInt(cursor.getColumnIndex("level"))));
-            map.put("time",
-                    new SimpleDateFormat("MM/dd HH:mm").format(Long.valueOf(
-                                    cursor.getString(cursor.getColumnIndex("time"))))
-            );
-            recordList.add(map);
+            JSONArray record = new JSONArray()
+                    .put(context.getSharedPreferences("Settings", Context.MODE_PRIVATE)
+                            .getString("playerName", "Unknown"))
+                    .put(String.format("No.%2d:", ++number))
+                    .put(String.valueOf(cursor.getInt(cursor.getColumnIndex("score"))))
+                    .put(String.format(
+                            "Level:%02d", cursor.getInt(cursor.getColumnIndex("level"))))
+                    .put(new SimpleDateFormat("MM/dd HH:mm").format(Long.valueOf(
+                            cursor.getString(cursor.getColumnIndex("time")))));
+            recordListJA.put(record);
         }
         db.close();
-        return recordList;
+        return new JSONArray().put(recordListJA);
     }
 
     public void insert(int level,int score, long time){
@@ -73,7 +72,5 @@ public class Records extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-    }
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {}
 }

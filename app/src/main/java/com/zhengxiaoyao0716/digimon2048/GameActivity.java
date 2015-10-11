@@ -12,7 +12,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.util.Base64;
 import com.zhengxiaoyao0716.data.Records;
-import com.zhengxiaoyao0716.view.ChooseDigimonDialog;
+import com.zhengxiaoyao0716.dialog.ChooseDigimonDialog;
 import com.zhengxiaoyao0716.game2048.*;
 
 import android.app.Activity;
@@ -36,7 +36,7 @@ import android.widget.TextView;
 
 import com.zhengxiaoyao0716.sound.Music;
 import com.zhengxiaoyao0716.sound.Sounds;
-import com.zhengxiaoyao0716.view.ShowGradeDialogView;
+import com.zhengxiaoyao0716.dialog.ShowGradeDialogView;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -196,7 +196,7 @@ public class GameActivity extends Activity {
 				case R.id.offButton:
 				{
 					new AlertDialog.Builder(context)
-							.setNegativeButton(R.string.cancel, null)
+							.setNegativeButton(R.string.backGame, null)
 							.setPositiveButton(R.string.quitGame,
 									new DialogInterface.OnClickListener() {
 										public void onClick(DialogInterface d, int i) {
@@ -339,6 +339,7 @@ public class GameActivity extends Activity {
 
 		@Override
 		public void showData(int level, int score, int[][] board) {
+			//是的，这里一定要getString()，否则执行加法
 			levelTextView.setText(getString(R.string.level) + level);
 			scoreTextView.setText(getString(R.string.score) + score);
 
@@ -354,8 +355,6 @@ public class GameActivity extends Activity {
 					if (boardNum == 0) grid.setImageResource(R.mipmap.grid0);
 					else if (board[height][width] <= aimNum)
 					{
-						//我要吐槽这里为毛会有警告？？？难道说
-						//imageName = imageSort.toString() + board[heigjt][width];效率更高？！
 						String imageName
 								= imageSort + board[height][width];
 						grid.setImageResource(resources.getIdentifier(imageName,
@@ -363,7 +362,6 @@ public class GameActivity extends Activity {
 					}
 					else
 					{
-						//这么多个append了还建议String？！
 						String imageName = String.format("grid%d_%d",
 								digimons[board[height][width] - aimNum - 1], 2 * aimNum);
 						grid.setImageResource(resources.getIdentifier(imageName,
@@ -419,6 +417,7 @@ public class GameActivity extends Activity {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							informer.commit(true);
+							writeRecord(level, score);
 						}
 					}).setCancelable(false).show();
 		}
@@ -447,6 +446,14 @@ public class GameActivity extends Activity {
 							}.chooseDigimon(digimons, level);
 						}
 					}).setCancelable(false).show();
+			writeRecord(level, score);
+		}
+		private void writeRecord(int level, int score)
+		{
+			//写入本地游戏记录
+			long time = System.currentTimeMillis();
+			new Records(context).insert(level, score, time);
+			//TODO 在线提交记录
 		}
 	};
 }

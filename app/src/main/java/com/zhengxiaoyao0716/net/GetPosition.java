@@ -3,8 +3,6 @@ package com.zhengxiaoyao0716.net;
 import android.os.Handler;
 import android.os.Message;
 
-import java.io.IOException;
-
 public class GetPosition implements Runnable{
     private Handler handler;
     private int level, score;

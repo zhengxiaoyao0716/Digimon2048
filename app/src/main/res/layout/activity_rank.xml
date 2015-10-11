@@ -11,10 +11,9 @@
 	android:paddingBottom="100dp"
 	android:gravity="top|center">
 
-	<ListView
-		android:layout_height="wrap_content"
-		android:layout_width="match_parent"
-		android:id="@+id/rankList" />
-
+	<ExpandableListView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/rankExpandableList"/>
 </LinearLayout>
 

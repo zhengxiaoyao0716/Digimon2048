@@ -8,19 +8,15 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
+import android.widget.ExpandableListView;
 import android.widget.Toast;
+import com.zhengxiaoyao0716.adapter.RankExpandableLA;
 import com.zhengxiaoyao0716.data.Records;
 import com.zhengxiaoyao0716.net.GetRankList;
-
-import java.util.List;
-import java.util.Map;
+import org.json.JSONArray;
 
 public class RankActivity extends Activity
 {
-
-	private List<? extends Map<String,?>> rankListData;
     @Override
     protected void onCreate(Bundle savedInstanceState)
 	{
@@ -54,27 +50,31 @@ public class RankActivity extends Activity
 				break;
 
 			case R.id.dayRank:
-				loadNetRankList(1, 50, true);
+				loadNetRankList(1, 500, true);
 				break;
 
 			case R.id.weekRank:
-				loadNetRankList(7, 100, true);
+				loadNetRankList(7, 1000, true);
 				break;
 
 			case R.id.lowestRank:
-				loadNetRankList(7, 50, false);
+				loadNetRankList(7, 500, false);
 				break;
 		}
 		return true;
 	}
 
 	private void loadMyRecords() {
-		rankListData = new Records(this).getRecordsList();
-		if (rankListData == null) {
-			Toast.makeText(this, R.string.nullRecords, Toast.LENGTH_LONG).show();
+		JSONArray recordListJA = new Records(this).getRecordsList();
+		if (recordListJA.length() == 0) {
+			Toast.makeText(this, R.string.getRankFailed, Toast.LENGTH_LONG).show();
 			return;
 		}
-		refreshList();
+		ExpandableListView rankExpandableList
+				= (ExpandableListView) findViewById(R.id.rankExpandableList);
+		rankExpandableList.setAdapter(
+				new RankExpandableLA(RankActivity.this, recordListJA));
+		rankExpandableList.expandGroup(0);
 	}
 	private void loadNetRankList(int days, int number, boolean isDESC) {
 		final ProgressDialog progressDialog = new ProgressDialog(this);
@@ -90,23 +90,17 @@ public class RankActivity extends Activity
 			{
 				super.handleMessage(msg);
 				if (msg.obj != null) {
-					rankListData = (List<? extends Map<String, ?>>) msg.obj;
-					refreshList();
+					JSONArray rankListJA = (JSONArray) msg.obj;
+					ExpandableListView rankExpandableList
+							= (ExpandableListView) findViewById(R.id.rankExpandableList);
+					rankExpandableList.setAdapter(
+							new RankExpandableLA(RankActivity.this, rankListJA));
+					rankExpandableList.expandGroup(0);
 				}
+				else Toast.makeText(
+						RankActivity.this, R.string.getRankFailed, Toast.LENGTH_LONG).show();
 				progressDialog.dismiss();
 			}
 		}, days, number, isDESC)).start();
-	}
-	private void refreshList()
-	{
-		ListView rankList = (ListView) findViewById(R.id.rankList);
-		rankList.setAdapter(new SimpleAdapter(this, rankListData, R.layout.list_item_rank,
-				new String[]{"number", "score", "name", "time"},
-				new int[]{
-						R.id.rankListItemNumber,
-						R.id.rankListItemScore,
-						R.id.rankListItemName,
-						R.id.rankListItemTime
-				}));
 	}
 }

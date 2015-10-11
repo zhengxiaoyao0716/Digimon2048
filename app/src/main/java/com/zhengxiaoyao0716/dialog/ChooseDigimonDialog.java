@@ -1,4 +1,4 @@
-package com.zhengxiaoyao0716.view;
+package com.zhengxiaoyao0716.dialog;
 
 import android.app.AlertDialog;
 import android.content.Context;

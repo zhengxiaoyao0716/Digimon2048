@@ -13,6 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
+import com.zhengxiaoyao0716.dialog.EditInfoDialog;
+import com.zhengxiaoyao0716.dialog.ShowGradeDialogView;
 import com.zhengxiaoyao0716.sound.Music;
 import com.zhengxiaoyao0716.sound.Sounds;
 
@@ -26,6 +28,9 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 
 		Sounds.INSTANCE.initSounds(this);
+		if (getSharedPreferences("Settings", MODE_PRIVATE)
+				.getString("playerName", "Unknown").equals("Unknown"))
+			EditInfoDialog.editInfo(this);
 	}
 
 	@Override
@@ -44,26 +49,25 @@ public class MainActivity extends Activity {
 	{
 		switch (item.getItemId())
 		{
-		case R.id.aboutItem:
-		{
-			new AlertDialog.Builder(this).setTitle(getString(R.string.about))
-					.setMessage(R.string.copyright)
-					.setPositiveButton(R.string.iKnow, null)
-					.setNegativeButton(R.string.attentionMe,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface d, int i) {
-							Intent intent = new Intent(Intent.ACTION_VIEW,
-									Uri.parse("http://zhengxiaoyao0716.lofter.com/"));
-							startActivity(intent);
-						}
-					}).show();
-		}break;
-		
-		case R.id.exitItem:
-		{
-			finish();
-		}break;
-		
+			case R.id.editItem:
+				EditInfoDialog.editInfo(this);
+				break;
+			case R.id.aboutItem:
+				new AlertDialog.Builder(this).setTitle(R.string.aboutDialogTitle)
+						.setMessage(R.string.copyright)
+						.setNegativeButton(R.string.connectMe, null)
+						.setPositiveButton(R.string.attentionMe,
+								new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface d, int i) {
+										Intent intent = new Intent(Intent.ACTION_VIEW,
+												Uri.parse("http://zhengxiaoyao0716.lofter.com/"));
+										startActivity(intent);
+									}
+								}).show();
+				break;
+			case R.id.exitItem:
+				finish();
+				break;
 		}
 		return true;
 	}

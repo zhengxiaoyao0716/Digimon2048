@@ -2,10 +2,6 @@ package com.zhengxiaoyao0716.net;
 
 import android.os.Handler;
 import android.os.Message;
-import org.json.JSONException;
-
-import java.io.IOException;
-import java.text.ParseException;
 
 public class GetRankList implements Runnable{
     private Handler handler;
