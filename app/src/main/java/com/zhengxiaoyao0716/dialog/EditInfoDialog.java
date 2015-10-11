@@ -20,8 +20,8 @@ public class EditInfoDialog {
         nameEditText.setGravity(Gravity.CENTER);
         String playerName = preferences.getString("playerName", "Unknown");
         nameEditText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(20)});
-        nameEditText.setSelection(playerName.length());
         nameEditText.setText(playerName);
+        nameEditText.selectAll();
         final SharedPreferences.Editor editor = preferences.edit();
         new AlertDialog.Builder(context).setTitle(R.string.editDialogTitle)
                 .setView(nameEditText)

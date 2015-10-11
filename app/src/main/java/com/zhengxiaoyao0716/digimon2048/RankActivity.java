@@ -12,7 +12,7 @@ import android.widget.ExpandableListView;
 import android.widget.Toast;
 import com.zhengxiaoyao0716.adapter.RankExpandableLA;
 import com.zhengxiaoyao0716.data.Records;
-import com.zhengxiaoyao0716.net.GetRankList;
+import com.zhengxiaoyao0716.net.GetRanks;
 import org.json.JSONArray;
 
 public class RankActivity extends Activity
@@ -84,7 +84,7 @@ public class RankActivity extends Activity
 		progressDialog.setCancelable(false);
 		progressDialog.show();
 
-		new Thread(new GetRankList(new Handler(){
+		new Thread(new GetRanks(new Handler(){
 			@Override
 			public void handleMessage(Message msg)
 			{

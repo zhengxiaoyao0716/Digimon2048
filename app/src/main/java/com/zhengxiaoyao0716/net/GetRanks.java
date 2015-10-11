@@ -3,11 +3,11 @@ package com.zhengxiaoyao0716.net;
 import android.os.Handler;
 import android.os.Message;
 
-public class GetRankList implements Runnable{
+public class GetRanks implements Runnable{
     private Handler handler;
     private int days, number;
     private boolean isDESC;
-    public GetRankList(Handler handler, int days, int number, boolean isDESC)
+    public GetRanks(Handler handler, int days, int number, boolean isDESC)
     {
         this.handler = handler;
         this.days = days;
@@ -18,7 +18,7 @@ public class GetRankList implements Runnable{
     public void run() {
         Message msg = handler.obtainMessage();
         try {
-            msg.obj = HttpUtilities.getRankList(days, number, isDESC);
+            msg.obj = HttpUtilities.getRanks(days, number, isDESC);
         } catch (Exception e) {
             e.printStackTrace();
         }

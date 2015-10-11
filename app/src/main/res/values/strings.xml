@@ -6,8 +6,8 @@
 	-->
     <string name="app_name">数码宝贝2048</string>
 
-	<string name="edit">编辑</string>
-	<string name="editDialogTitle">先取一个好听点儿的名字吧~</string>
+	<string name="edit">修改</string>
+	<string name="editDialogTitle">取一个好听的名字吧~</string>
 	<string name="cancelEdit">放弃修改</string>
 	<string name="saveEdit">保存修改</string>
 	<string name="editFailed">修改昵称失败，字数不得少于3！</string>
