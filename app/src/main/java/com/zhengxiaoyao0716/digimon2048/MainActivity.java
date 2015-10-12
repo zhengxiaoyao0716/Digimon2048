@@ -55,8 +55,15 @@ public class MainActivity extends Activity {
 			case R.id.aboutItem:
 				new AlertDialog.Builder(this).setTitle(R.string.aboutDialogTitle)
 						.setMessage(R.string.copyright)
-						.setNegativeButton(R.string.connectMe, null)
-						.setPositiveButton(R.string.attentionMe,
+						.setNegativeButton(R.string.attentionMe,
+								new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface d, int i) {
+										Intent intent = new Intent(Intent.ACTION_VIEW,
+												Uri.parse("http://zhengxiaoyao0716.lofter.com/"));
+										startActivity(intent);
+									}
+								})
+						.setPositiveButton(R.string.supportMe,
 								new DialogInterface.OnClickListener() {
 									public void onClick(DialogInterface d, int i) {
 										Intent intent = new Intent(Intent.ACTION_VIEW,

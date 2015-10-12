@@ -13,16 +13,17 @@
 	<string name="editFailed">修改昵称失败，字数不得少于3！</string>
 
 	<string name="about">关于</string>
-	<string name="aboutDialogTitle">亲，给我点动力呗~~~</string>
+	<string name="aboutDialogTitle">求关注求支持求动力~</string>
 	<string name="copyright">
-		版本：1.0\n
-		作者：正逍遥0716\n
+		亲，玩的开心吗？支持一下我呗~\n
+		很简单的，点下面的按钮查看广告就行了，\n
+		帮个忙吧，我会很感激的！！！\n
 		\n
 		Copyright©2015 正逍遥0716.\n
 		Some Rights Reserved.
 	</string>
-	<string name="connectMe">联系我</string>
 	<string name="attentionMe">关注我</string>
+	<string name="supportMe">支持我</string>
 
 	<string name="exit">退出</string>
 

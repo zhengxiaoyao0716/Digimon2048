@@ -66,7 +66,7 @@ public class RankActivity extends Activity
 
 	private void loadMyRecords() {
 		JSONArray recordListJA = new Records(this).getRecordsList();
-		if (recordListJA.length() == 0) {
+		if (recordListJA.optJSONArray(0).length() == 0) {
 			Toast.makeText(this, R.string.getRankFailed, Toast.LENGTH_LONG).show();
 			return;
 		}
