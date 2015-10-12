@@ -50,15 +50,15 @@ public class RankActivity extends Activity
 				break;
 
 			case R.id.dayRank:
-				loadNetRankList(1, 500, true);
+				loadNetRankList(1, 50, true);
 				break;
 
 			case R.id.weekRank:
-				loadNetRankList(7, 1000, true);
+				loadNetRankList(7, 50, true);
 				break;
 
 			case R.id.lowestRank:
-				loadNetRankList(7, 500, false);
+				loadNetRankList(1, 50, false);
 				break;
 		}
 		return true;
