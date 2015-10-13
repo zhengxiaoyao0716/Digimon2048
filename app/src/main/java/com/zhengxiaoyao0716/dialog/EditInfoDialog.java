@@ -14,15 +14,13 @@ public class EditInfoDialog {
     public static void editInfo(final Context context)
     {
         final EditText nameEditText = new EditText(context);
-        SharedPreferences preferences
-                = context.getSharedPreferences("Settings", Context.MODE_PRIVATE);
         nameEditText.setPadding(0, 60, 0, 30);
         nameEditText.setGravity(Gravity.CENTER);
-        String playerName = preferences.getString("playerName", "Unknown");
         nameEditText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(20)});
-        nameEditText.setText(playerName);
+        final SharedPreferences preferences
+                = context.getSharedPreferences("Settings", Context.MODE_PRIVATE);
+        nameEditText.setText(preferences.getString("playerName", "Unknown"));
         nameEditText.selectAll();
-        final SharedPreferences.Editor editor = preferences.edit();
         new AlertDialog.Builder(context).setTitle(R.string.editDialogTitle)
                 .setView(nameEditText)
                 .setNegativeButton(R.string.cancelEdit, null)
@@ -31,8 +29,8 @@ public class EditInfoDialog {
                             public void onClick(DialogInterface d, int i) {
                                 String playerName = nameEditText.getText().toString();
                                 if (playerName.length() > 2) {
-                                    editor.putString("playerName", playerName);
-                                    editor.commit();
+                                    preferences.edit().putString("playerName", playerName)
+                                            .commit();
                                 } else Toast.makeText(context,
                                         R.string.editFailed, Toast.LENGTH_LONG).show();
                             }

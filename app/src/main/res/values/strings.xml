@@ -6,26 +6,33 @@
 	-->
     <string name="app_name">数码宝贝2048</string>
 
-	<string name="edit">修改</string>
+	<string name="edit">修改昵称</string>
 	<string name="editDialogTitle">取一个好听的名字吧~</string>
 	<string name="cancelEdit">放弃修改</string>
 	<string name="saveEdit">保存修改</string>
 	<string name="editFailed">修改昵称失败，字数不得少于3！</string>
 
-	<string name="about">关于</string>
+	<string name="about">给我动力</string>
 	<string name="aboutDialogTitle">求关注求支持求动力~</string>
-	<string name="copyright">
+	<string name="adWasClosed">
 		亲，玩的开心吗？支持一下我呗~\n
-		很简单的，点下面的按钮查看广告就行了，\n
+		点下面的按钮查看广告就行了，\n
 		帮个忙吧，我会很感激的！！！\n
-		\n
-		Copyright©2015 正逍遥0716.\n
+	</string>
+	<string name="adIsShowing">
+		亲，没流量了？不想看广告了？\n
+		没关系，那就关掉广告吧~\n
+		谢谢您的支持！\n
+	</string>
+	<string name="copyright">
+		\nCopyright©2015 正逍遥0716.\n
 		Some Rights Reserved.
 	</string>
 	<string name="attentionMe">关注我</string>
 	<string name="supportMe">支持我</string>
+	<string name="closeAd">省流量</string>
 
-	<string name="exit">退出</string>
+	<string name="exit">退出游戏</string>
 
 	<string name="helpString0">
 		每次滑动都会随机获得一只幼年体数码宝贝或一枚数码蛋。
@@ -36,6 +43,9 @@
 	<string name="helpString2">
 		当前数码宝贝进化到究极体后，还可以加入新的伙伴继续进化哦！
 	</string>
+
+	<string name="adLoading">谢谢您，广告加载中，请稍候...</string>
+	<string name="loadFailed">呃，广告加载失败了，不过还是谢谢您的支持</string>
 
 	<!--
 	GameActivity
@@ -62,6 +72,7 @@
 	<string name="yourLevel">等级：%02d级</string>
 	<string name="yourScore">得分：%5d分</string>
 	<string name="yourRank">在线排名：</string>
+	<string name="openAdView">点广告，支持我</string>
 
 	<string name="levelUp">恭喜晋级！</string>
 	<!--<string name="replay">重玩本关</string>-->

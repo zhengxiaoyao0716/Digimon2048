@@ -52,4 +52,14 @@
             tools:text="在线排名：111"
             android:id="@+id/yourRank"
             android:layout_gravity="center_horizontal"/>
+
+    <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="128dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@string/openAdView"
+            android:id="@+id/openAdView"
+            android:background="@drawable/show_ad_button_bg"
+            android:layout_gravity="center_horizontal"/>
 </LinearLayout>

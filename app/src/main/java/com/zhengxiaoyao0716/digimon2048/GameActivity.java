@@ -410,7 +410,7 @@ public class GameActivity extends Activity {
 			((Vibrator) getSystemService(Service.VIBRATOR_SERVICE)).vibrate(500);
 
 			new AlertDialog.Builder(context).setMessage(R.string.gameOver)
-					.setView(ShowGradeDialogView.getGradeDialogView(context, level, score))
+					.setView(ShowGradeDialogView.getGradeDialogView(GameActivity.this, level, score))
 					.setNegativeButton(R.string.replayLater, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
@@ -431,7 +431,7 @@ public class GameActivity extends Activity {
 			Sounds.INSTANCE.playSound("level_up");
 
 			new AlertDialog.Builder(context).setMessage(R.string.levelUp)
-					.setView(ShowGradeDialogView.getGradeDialogView(context, level, score))
+					.setView(ShowGradeDialogView.getGradeDialogView(GameActivity.this, level, score))
 					.setNegativeButton(R.string.replay, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {

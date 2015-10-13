@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,9 +14,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
+import com.baidu.autoupdatesdk.BDAutoUpdateSDK;
+import com.baidu.autoupdatesdk.UICheckUpdateCallback;
+import com.zhengxiaoyao0716.baidu.BDBannerAdView;
 import com.zhengxiaoyao0716.dialog.EditInfoDialog;
-import com.zhengxiaoyao0716.dialog.ShowGradeDialogView;
-import com.zhengxiaoyao0716.sound.Music;
 import com.zhengxiaoyao0716.sound.Sounds;
 
 import java.util.Random;
@@ -28,9 +30,18 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 
 		Sounds.INSTANCE.initSounds(this);
-		if (getSharedPreferences("Settings", MODE_PRIVATE)
-				.getString("playerName", "Unknown").equals("Unknown"))
+		SharedPreferences preferences
+				= getSharedPreferences("Settings", MODE_PRIVATE);
+		if (preferences.getString("playerName", "Unknown")
+				.equals("Unknown"))
 			EditInfoDialog.editInfo(this);
+		if (preferences.getBoolean("isBannerAdShowing", false))
+			BDBannerAdView.showAdView(this);
+		//百度更新检测
+		BDAutoUpdateSDK.uiUpdateAction(this, new UICheckUpdateCallback() {
+			@Override
+			public void onCheckComplete() {}
+		});
 	}
 
 	@Override
@@ -52,9 +63,15 @@ public class MainActivity extends Activity {
 			case R.id.editItem:
 				EditInfoDialog.editInfo(this);
 				break;
-			case R.id.aboutItem:
+			case R.id.aboutItem: {
+				final SharedPreferences preferences
+						= getSharedPreferences("Settings", MODE_PRIVATE);
+				final boolean isBannerAdShowing
+						= preferences.getBoolean("isBannerAdShowing", false);
 				new AlertDialog.Builder(this).setTitle(R.string.aboutDialogTitle)
-						.setMessage(R.string.copyright)
+						.setMessage(getString(isBannerAdShowing ?
+								R.string.adIsShowing : R.string.adWasClosed)
+								+ getString(R.string.copyright))
 						.setNegativeButton(R.string.attentionMe,
 								new DialogInterface.OnClickListener() {
 									public void onClick(DialogInterface d, int i) {
@@ -63,15 +80,19 @@ public class MainActivity extends Activity {
 										startActivity(intent);
 									}
 								})
-						.setPositiveButton(R.string.supportMe,
+						.setPositiveButton(isBannerAdShowing ?
+										R.string.closeAd : R.string.supportMe,
 								new DialogInterface.OnClickListener() {
 									public void onClick(DialogInterface d, int i) {
-										Intent intent = new Intent(Intent.ACTION_VIEW,
-												Uri.parse("http://zhengxiaoyao0716.lofter.com/"));
-										startActivity(intent);
+										if (isBannerAdShowing)
+											BDBannerAdView.closeAdView(MainActivity.this);
+										else
+											BDBannerAdView.showAdView(MainActivity.this);
+										preferences.edit().putBoolean("isBannerAdShowing",
+												!isBannerAdShowing).commit();
 									}
 								}).show();
-				break;
+			}break;
 			case R.id.exitItem:
 				finish();
 				break;
