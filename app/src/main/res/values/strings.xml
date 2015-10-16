@@ -46,6 +46,10 @@
 
 	<string name="adLoading">谢谢您，广告加载中，请稍候...</string>
 	<string name="loadFailed">呃，广告加载失败了，不过还是谢谢您的支持</string>
+	<string name="loadSucceed">
+		广告已成功加载，再次感谢您的支持\n
+		您可以随时在标题界面的“给我动力”菜单内关闭它。
+	</string>
 
 	<!--
 	GameActivity
@@ -91,5 +95,9 @@
 	<string name="lowestRank">囧排行</string>
 
 	<string name="getRankFailed">抱歉，排行数据获取失败</string>
+    <string name="title_activity_guide">GuideActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
 
 </resources>

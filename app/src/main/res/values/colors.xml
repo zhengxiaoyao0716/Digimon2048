@@ -12,4 +12,8 @@
     <color name="gameBgColor7">#333333</color>
     <color name="gameBgColor8">#eeeeee</color>
 
+    <!--GuideActivity-->
+    <color name="dot_color_normal">#6a6acc</color>
+    <color name="dot_color_light">#2e2ecc</color>
+
 </resources>

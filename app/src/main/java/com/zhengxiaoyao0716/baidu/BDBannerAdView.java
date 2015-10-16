@@ -27,7 +27,8 @@ public class BDBannerAdView {
             }
 
             @Override
-            public void onAdvertisementDataDidLoadSuccess() {}
+            public void onAdvertisementDataDidLoadSuccess() {
+                Toast.makeText(activity, R.string.loadSucceed, Toast.LENGTH_LONG).show();}
             @Override
             public void onAdvertisementViewDidClick() {}
             @Override

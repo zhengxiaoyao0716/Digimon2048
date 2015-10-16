@@ -32,6 +32,8 @@ public class MainActivity extends Activity {
 		Sounds.INSTANCE.initSounds(this);
 		SharedPreferences preferences
 				= getSharedPreferences("Settings", MODE_PRIVATE);
+		if (preferences.getBoolean("firstUse", true))
+			startActivity(new Intent(this, GuideActivity.class));
 		if (preferences.getString("playerName", "Unknown")
 				.equals("Unknown"))
 			EditInfoDialog.editInfo(this);
