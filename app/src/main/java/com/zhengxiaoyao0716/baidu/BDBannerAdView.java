@@ -26,8 +26,11 @@ public class BDBannerAdView {
                 Toast.makeText(activity, R.string.loadFailed, Toast.LENGTH_LONG).show();
             }
 
+            boolean alreadyShowed;
             @Override
             public void onAdvertisementDataDidLoadSuccess() {
+                if (alreadyShowed) return;
+                else alreadyShowed = true;
                 Toast.makeText(activity, R.string.loadSucceed, Toast.LENGTH_LONG).show();}
             @Override
             public void onAdvertisementViewDidClick() {}
