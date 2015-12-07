@@ -1,6 +1,7 @@
 package com.zhengxiaoyao0716.baidu;
 
 import android.app.Activity;
+import android.content.Context;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 import com.baidu.appx.BDBannerAd;
@@ -24,13 +25,14 @@ public class BDBannerAdView {
             @Override
             public void onAdvertisementDataDidLoadFailure() {
                 Toast.makeText(activity, R.string.loadFailed, Toast.LENGTH_LONG).show();
+                activity.getSharedPreferences("Settings", Context.MODE_PRIVATE).edit().putBoolean("isBannerAdShowing", false).commit();
             }
 
-            boolean alreadyLoaded;
+            boolean alreadyShowed;
             @Override
             public void onAdvertisementDataDidLoadSuccess() {
-                if (alreadyLoaded) return;
-                else alreadyLoaded = true;
+                if (alreadyShowed) return;
+                else alreadyShowed = true;
                 Toast.makeText(activity, R.string.loadSucceed, Toast.LENGTH_LONG).show();}
             @Override
             public void onAdvertisementViewDidClick() {}

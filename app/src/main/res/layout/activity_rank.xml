@@ -4,16 +4,70 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	android:orientation="vertical"
-	android:background="@mipmap/rank_list"
-	android:paddingTop="120dp"
-	android:paddingLeft="30dp"
-	android:paddingRight="30dp"
-	android:paddingBottom="100dp"
 	android:gravity="top|center">
 
 	<ExpandableListView
+			android:layout_width="wrap_content"
+			android:layout_height="0dp"
+			android:layout_weight="1"
+			android:paddingTop="120dp"
+			android:paddingLeft="30dp"
+			android:paddingRight="30dp"
+			android:paddingBottom="100dp"
+			android:id="@+id/rankExpandableList"
+			android:background="@mipmap/rank_list"/>
+
+	<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:id="@+id/rankExpandableList"/>
+			android:orientation="horizontal"
+			style="?android:attr/buttonBarStyle">
+
+		<Button
+				android:id="@+id/myRecord"
+				android:onClick="onRankMethodClick"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="@string/myRecord"
+				android:textColor="@android:color/white"
+				android:background="@color/rankMethodLight"
+				style="?android:attr/buttonBarButtonStyle"/>
+
+		<Button
+				android:id="@+id/dayRank"
+				android:onClick="onRankMethodClick"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="@string/dayRank"
+				android:textColor="@android:color/white"
+				android:background="@color/rankMethodDark"
+				style="?android:attr/buttonBarButtonStyle"/>
+
+		<Button
+				android:id="@+id/weekRank"
+				android:onClick="onRankMethodClick"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="@string/weekRank"
+				android:textColor="@android:color/white"
+				android:background="@color/rankMethodDark"
+				style="?android:attr/buttonBarButtonStyle"/>
+
+		<Button
+				android:id="@+id/lowestRank"
+				android:onClick="onRankMethodClick"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="@string/lowestRank"
+				android:textColor="@android:color/white"
+				android:background="@color/rankMethodDark"
+				style="?android:attr/buttonBarButtonStyle"/>
+
+	</LinearLayout>
+
 </LinearLayout>
 

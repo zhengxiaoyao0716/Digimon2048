@@ -1,13 +1,15 @@
 package com.zhengxiaoyao0716.digimon2048;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.view.Menu;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 import com.zhengxiaoyao0716.adapter.RankExpandableLA;
@@ -15,14 +17,14 @@ import com.zhengxiaoyao0716.data.Records;
 import com.zhengxiaoyao0716.net.GetRanks;
 import org.json.JSONArray;
 
-public class RankActivity extends Activity
+public class RankActivity extends AppCompatActivity
 {
     @Override
     protected void onCreate(Bundle savedInstanceState)
 	{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rank);
-		
+
 		ActionBar actionBar = getActionBar();
 		if (actionBar!=null)
 			actionBar.setDisplayHomeAsUpEnabled(true);
@@ -31,20 +33,33 @@ public class RankActivity extends Activity
     }
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
-		getMenuInflater().inflate(R.menu.menu_rank, menu);
-		return true;
-	}
-	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-		switch (item.getItemId())
-		{
-			case android.R.id.home:
-				finish();
-				break;
+		if (item.getItemId() == android.R.id.home) finish();
+		return true;
+	}
 
+	private int methodId;
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+		SharedPreferences preferences = getSharedPreferences("Settings", MODE_PRIVATE);
+		methodId = preferences.getInt("methodId", R.id.myRecord);
+	}
+	@Override
+	protected void onPause() {
+		super.onPause();
+
+		SharedPreferences.Editor editor = getSharedPreferences("Settings", MODE_PRIVATE).edit();
+		editor.putInt("methodId", methodId);
+		editor.commit();
+	}
+	public void onRankMethodClick(View view)
+	{
+		findViewById(methodId).setBackgroundColor(getResources().getColor(R.color.rankMethodDark));
+		switch (methodId = view.getId())
+		{
 			case R.id.myRecord:
 				loadMyRecords();
 				break;
@@ -60,10 +75,11 @@ public class RankActivity extends Activity
 			case R.id.lowestRank:
 				loadNetRankList(1, 50, false);
 				break;
+			default:
+				return;
 		}
-		return true;
+		view.setBackgroundColor(getResources().getColor(R.color.rankMethodLight));
 	}
-
 	private void loadMyRecords() {
 		JSONArray recordListJA = new Records(this).getRecordsList();
 		if (recordListJA.optJSONArray(0).length() == 0) {

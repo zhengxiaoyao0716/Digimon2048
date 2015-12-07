@@ -1,19 +1,11 @@
 <resources>
 	
-	<style name="BaseTheme" parent="@android:style/Theme.Holo.Light">
-        <item name="android:actionBarStyle">@style/MyActionBar</item>
-        <item name="android:windowActionBarOverlay">true</item>
+	<style name="BaseTheme" parent="Theme.AppCompat.Light">
+        <item name="actionBarStyle">@style/MyActionBar</item>
+        <item name="windowActionBarOverlay">true</item>
     </style>
-    <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
-        <item name="android:background">#66FFFFFF</item>
+    <style name="MyActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="background">@color/actionBar</item>
     </style>
-
-    <!-- 什么鬼，提示说不应该在布局里添加background，结果这里加渲染成无限镜面了？？？
-    <style name="MainTheme" parent="@style/BaseTheme">
-        <item name="android:background">@mipmap/main_page</item>
-    </style> -->
-	<style name="BoardTheme"
-		parent="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen">
-	</style>
 	
 </resources>

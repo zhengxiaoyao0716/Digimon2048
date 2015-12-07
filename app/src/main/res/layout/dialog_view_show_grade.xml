@@ -58,6 +58,7 @@
             android:layout_width="128dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
             android:text="@string/openAdView"
             android:id="@+id/openAdView"
             android:background="@drawable/show_ad_button_bg"

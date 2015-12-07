@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Application -->
+    <color name="actionBar">#66FFFFFF</color>
 
-    <!--GameActivity-->
+    <!-- GuideActivity -->
+    <color name="dot_color_normal">#6a6acc</color>
+    <color name="dot_color_light">#2e2ecc</color>
+
+    <!-- GameActivity -->
     <color name="gameBgColor0">#ff0b0b</color>
     <color name="gameBgColor1">#ff6600</color>
     <color name="gameBgColor2">#eeee00</color>
@@ -12,8 +18,8 @@
     <color name="gameBgColor7">#333333</color>
     <color name="gameBgColor8">#eeeeee</color>
 
-    <!--GuideActivity-->
-    <color name="dot_color_normal">#6a6acc</color>
-    <color name="dot_color_light">#2e2ecc</color>
+    <!-- RankActivity -->
+    <color name="rankMethodLight">#ff5000</color>
+    <color name="rankMethodDark">#33b5e5</color>
 
 </resources>
