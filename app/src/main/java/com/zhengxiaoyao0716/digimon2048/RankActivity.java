@@ -26,8 +26,7 @@ public class RankActivity extends AppCompatActivity
         setContentView(R.layout.activity_rank);
 
 		ActionBar actionBar = getActionBar();
-		if (actionBar!=null)
-			actionBar.setDisplayHomeAsUpEnabled(true);
+		if (actionBar != null) actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP);
 
 		loadMyRecords();
     }
@@ -46,6 +45,7 @@ public class RankActivity extends AppCompatActivity
 
 		SharedPreferences preferences = getSharedPreferences("Settings", MODE_PRIVATE);
 		methodId = preferences.getInt("methodId", R.id.myRecord);
+		findViewById(methodId).setBackgroundColor(getResources().getColor(R.color.rankMethodLight));
 	}
 	@Override
 	protected void onPause() {
